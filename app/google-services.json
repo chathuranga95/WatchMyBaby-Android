@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "197695828620",
+    "firebase_url": "https://watchmybaby-52d18.firebaseio.com",
+    "project_id": "watchmybaby-52d18",
+    "storage_bucket": "watchmybaby-52d18.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:197695828620:android:7a8dd208e4b0dd89",
+        "android_client_info": {
+          "package_name": "com.example.chathus.watchmybaby"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "197695828620-hqpupndcv09chgqmlaaeciap2m1a0gvr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chathus.watchmybaby",
+            "certificate_hash": "a30b1ef56b961f81353d035f9d727d478704307f"
+          }
+        },
+        {
+          "client_id": "197695828620-5jf64c2pbmadjsh9i5v0u0snr4d4e7ea.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZY5m7U3MFyZuLAy0LvkzLNtOwK9GhT34"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "197695828620-5jf64c2pbmadjsh9i5v0u0snr4d4e7ea.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

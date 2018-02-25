@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.chathus.watchmybaby.CreateNewUserActivity"
+
+    >
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fillViewport="true">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="8dp">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/txtName"
+                android:layout_alignBottom="@+id/txtName"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="9dp"
+                android:text="Name" />
+
+            <EditText
+                android:id="@+id/txtName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginEnd="28dp"
+                android:layout_marginTop="18dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/txtEmail"
+                android:layout_alignBottom="@+id/txtEmail"
+                android:layout_alignStart="@+id/textView"
+                android:text="Email" />
+
+            <EditText
+                android:id="@+id/txtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtName"
+                android:layout_below="@+id/txtName"
+                android:layout_marginTop="13dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/txtPhone"
+                android:layout_alignBottom="@+id/txtPhone"
+                android:layout_alignStart="@+id/textView2"
+                android:text="Mobile" />
+
+            <EditText
+                android:id="@+id/txtPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtEmail"
+                android:layout_below="@+id/txtEmail"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:inputType="phone" />
+
+            <EditText
+                android:id="@+id/txtUserName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtPhone"
+                android:layout_below="@+id/txtPhone"
+                android:layout_marginTop="22dp"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/txtUserName"
+                android:layout_alignBottom="@+id/txtUserName"
+                android:layout_alignStart="@+id/textView3"
+                android:text="User Name" />
+
+            <EditText
+                android:id="@+id/txtPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtUserName"
+                android:layout_below="@+id/txtUserName"
+                android:layout_marginTop="30dp"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/txtConfirmPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/txtPass"
+                android:layout_below="@+id/txtPass"
+                android:layout_marginTop="34dp"
+                android:ems="10"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/textView5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/txtPass"
+                android:layout_alignBottom="@+id/txtPass"
+                android:layout_alignStart="@+id/textView4"
+                android:text="Password" />
+
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/textView5"
+                android:layout_alignTop="@+id/txtConfirmPass"
+                android:text="Confirm Password" />
+
+            <Button
+                android:id="@+id/btnOK"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/txtConfirmPass"
+                android:layout_below="@+id/txtConfirmPass"
+                android:layout_marginTop="22dp"
+                android:onClick="create"
+                android:text="Create"
+                />
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>
