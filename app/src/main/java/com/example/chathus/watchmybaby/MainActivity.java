@@ -36,6 +36,7 @@ import utill.NotificationService;
 import utill.WebRTC;
 
 public class MainActivity extends AppCompatActivity {
+    String userName ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         //retrieve username
-        String userName = getIntent().getStringExtra("userName");
+        userName = getIntent().getStringExtra("userName");
 
         //Create a webRTC object and start listening to the user specified channel
         WebRTC webRTC = new WebRTC(MainActivity.this);
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void scheduleLullaby(View view) {
         Intent myIntent = new Intent(MainActivity.this, ScheculeLullabyActivity.class);
+        myIntent.putExtra("userName",userName);
         startActivity(myIntent);
     }
 

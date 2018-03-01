@@ -20,7 +20,9 @@
             android:layout_below="@+id/lblProgress"
             android:layout_marginTop="21dp"
             android:drawSelectorOnTop="false"
-            android:listSelector="@android:color/darker_gray" />
+            android:listSelector="@android:color/darker_gray"
+
+            />
 
         <Button
             android:id="@+id/btnSetTime"
@@ -29,7 +31,8 @@
             android:layout_above="@+id/lblProgress"
             android:layout_alignParentStart="true"
             android:layout_marginStart="28dp"
-            android:text="Set Time" />
+            android:text="Set Time"
+            android:onClick="setTime"/>
 
         <ImageButton
             android:id="@+id/btnDel"

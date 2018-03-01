@@ -74,7 +74,7 @@ public class User {
         return settings;
     }
 
-    public void setSettings(int tel1, int tel2) {
-        this.settings = new UserAppSettings(tel1, tel2);
+    public void setSettings(UserAppSettings settings) {
+        this.settings = settings;
     }
 }

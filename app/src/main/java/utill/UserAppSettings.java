@@ -1,5 +1,8 @@
 package utill;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Created by chathuranga on 2/2/2018.
  */
@@ -9,10 +12,24 @@ public class UserAppSettings {
     private int tel2;
     private boolean notification;
     private boolean SMS;
+    HashMap<String, String> fileList = new HashMap();
+
+
+    public UserAppSettings() {
+
+    }
+
+    public HashMap<String, String> getFileList() {
+        return fileList;
+    }
 
     public UserAppSettings(int tel1, int tel2) {
         this.tel1 = tel1;
         this.tel2 = tel2;
+    }
+
+    public void addFile(String fileName, String time) {
+        fileList.put(fileName,time);
     }
 
     public int getTel1() {
