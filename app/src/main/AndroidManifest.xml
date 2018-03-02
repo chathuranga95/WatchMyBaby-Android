@@ -31,11 +31,7 @@
     <activity
         android:name=".LoginActivity"
         android:label="Watch My Baby">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
     </activity>
     <activity
         android:name=".CreateNewUserActivity"
@@ -43,7 +39,11 @@
     <activity
         android:name=".MainActivity"
         android:label="Watch My Baby">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
     </activity>
     <activity android:name=".ViewBabyActivity"></activity>
     <activity android:name=".ScheculeLullabyActivity" />

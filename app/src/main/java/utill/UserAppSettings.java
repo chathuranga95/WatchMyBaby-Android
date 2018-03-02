@@ -32,6 +32,11 @@ public class UserAppSettings {
         fileList.put(fileName,time);
     }
 
+    public void editFileTime(String fileName, String time){
+        fileList.remove(fileName);
+        fileList.put(fileName, time);
+    }
+
     public int getTel1() {
         return tel1;
     }

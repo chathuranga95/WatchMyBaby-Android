@@ -45,42 +45,68 @@ import utill.User;
 
 public class ScheculeLullabyActivity extends AppCompatActivity {
     ArrayList<String> values = new ArrayList<>();
+    ArrayList<String> fileNameList = new ArrayList<>();
     Calendar calendar;
     TimePickerDialog timepickerdialog;
     String format; //time format
     Button btnSetTime;
+    ListView listView;
+    User user;
+    Map<String, String> fileDetalis;
+    int selectedIndex;
+    String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schecule_lullaby);
-        btnSetTime  = (Button) findViewById(R.id.btnSetTime);
+        btnSetTime = (Button) findViewById(R.id.btnSetTime);
+        listView = (ListView) findViewById(R.id.lstFiles);
         setTitle("Schedule Lullabies");
-
+        userName = getIntent().getStringExtra("userName");
         //disable set time button at loading
         btnSetTime.setEnabled(false);
 
         //refresh file list
         refreshFileList();
+
+        //ListView item select listener.
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, values);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                btnSetTime.setEnabled(true);
+                Toast.makeText(ScheculeLullabyActivity.this, values.get(position), Toast.LENGTH_SHORT).show();
+                selectedIndex = position;
+            }
+        });
     }
 
-    private void refreshFileList(){
-        ListView listView = (ListView) findViewById(R.id.lstFiles);
+    private void refreshFileList() {
+        values = new ArrayList<>();
+        fileNameList = new ArrayList<>();
+
         final String TAG = "fillingfilelist";
         // get database instance and slot
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        final DatabaseReference myRef = database.getReference(getIntent().getStringExtra("userName"));
+        final DatabaseReference myRef = database.getReference(userName);
         Log.d(TAG, "instance and ref retrieved");
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Create User Object out of database data
-                User user = (User) dataSnapshot.getValue(User.class);
+                user = (User) dataSnapshot.getValue(User.class);
                 Log.d(TAG, "user object received...");
-                Map<String, String> fileDetalis = user.getSettings().getFileList();
+                fileDetalis = user.getSettings().getFileList();
                 for (String key : fileDetalis.keySet()) {
                     values.add(key + "   :" + fileDetalis.get(key));
+                    fileNameList.add(key);
                 }
             }
 
@@ -94,23 +120,6 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(getApplicationContext(), text, duration);
                 toast.show();
-            }
-        });
-
-
-//        values = new String[]{"File 001", "file 002", "file 003", "file 004", "file 005", "file 006"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, values);
-        listView.setAdapter(adapter);
-        // ListView on item selected listener.
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                btnSetTime.setEnabled(true);
-                Toast.makeText(ScheculeLullabyActivity.this, values.get(position), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -131,6 +140,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                 Uri file = data.getData();
                 FileHandler fileHandler = new FileHandler(this, getIntent().getStringExtra("userName"));
                 fileHandler.upload(file);
+                refreshFileList();
             }
         }
     }
@@ -149,7 +159,6 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int min = calendar.get(Calendar.MINUTE);
 
-
         timepickerdialog = new TimePickerDialog(ScheculeLullabyActivity.this,
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -166,8 +175,41 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                             format = "AM";
                         }
                         Log.d("timechoose", hourOfDay + ":" + minute + format);
+                        Log.d("timechoose", fileNameList.get(selectedIndex) + " changed");
+                        changeTimeOnDB(hourOfDay, minute);
                     }
                 }, hour, min, false);
         timepickerdialog.show();
     }
+
+    private void changeTimeOnDB(int hour, int min){
+        user.getSettings().editFileTime(fileNameList.get(selectedIndex),hour + ":" + min + format);
+
+        final String TAG = "changeTimeOnDB";
+        // get database instance and slot
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference(userName);
+        Log.d(TAG, "instance and ref retrieved");
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //write new User object to the database
+                myRef.setValue(user);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value, log details.
+                Log.w(TAG, "Failed to read value.", error.toException());
+
+                // show a toast to user
+                CharSequence text = "Login Error, Please Try again!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                toast.show();
+            }
+        });
+    }
+
 }
