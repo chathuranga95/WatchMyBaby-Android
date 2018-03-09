@@ -12,14 +12,14 @@ public class UserAppSettings {
     private int tel2;
     private boolean notification;
     private boolean SMS;
-    HashMap<String, String> fileList = new HashMap();
+    HashMap<String, Integer> fileList = new HashMap();
 
 
     public UserAppSettings() {
 
     }
 
-    public HashMap<String, String> getFileList() {
+    public HashMap<String, Integer> getFileList() {
         return fileList;
     }
 
@@ -28,11 +28,11 @@ public class UserAppSettings {
         this.tel2 = tel2;
     }
 
-    public void addFile(String fileName, String time) {
+    public void addFile(String fileName, int time) {
         fileList.put(fileName,time);
     }
 
-    public void editFileTime(String fileName, String time){
+    public void editFileTime(String fileName, int time){
         fileList.remove(fileName);
         fileList.put(fileName, time);
     }

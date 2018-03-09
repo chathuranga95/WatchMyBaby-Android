@@ -31,7 +31,11 @@
     <activity
         android:name=".LoginActivity"
         android:label="Watch My Baby">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
     </activity>
     <activity
         android:name=".CreateNewUserActivity"
@@ -39,23 +43,16 @@
     <activity
         android:name=".MainActivity"
         android:label="Watch My Baby">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
     </activity>
     <activity android:name=".ViewBabyActivity"></activity>
     <activity android:name=".ScheculeLullabyActivity" />
     <activity android:name=".SettingsActivity"></activity>
 
-        <service android:name="utill.NotificationService">
-            <intent-filter>
-                <action android:name= "com.example.chathus.watchmybaby.utill.NotificationService" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </service>
+        <service android:name="utill.NotificationService" />
 </application>
+    <uses-permission android:name="android.permission.SEND_SMS">
+    </uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     </manifest>

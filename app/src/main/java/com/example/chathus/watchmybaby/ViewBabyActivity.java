@@ -16,18 +16,18 @@ import android.webkit.WebViewClient;
 
 public class ViewBabyActivity extends AppCompatActivity {
     WebView myWebView;
+    String userName = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_baby);
-        //Get a reference to your WebView//
+
+        //retrieve username
+        userName = getIntent().getStringExtra("userName");
+
+        //Get a reference to the WebView
         myWebView = (WebView) findViewById(R.id.webview);
-
-        //Specify the URL you want to display
-
-//        webView.loadUrl("http://beta.html5test.com/");
-//        webView.loadUrl("192.168.8.101:8000/index.html");
 
         //Obtain the WebSettings object
         WebSettings webSettings = myWebView.getSettings();
@@ -35,11 +35,10 @@ public class ViewBabyActivity extends AppCompatActivity {
         //javascript enable
         webSettings.setJavaScriptEnabled(true);
 
+        // Grant permissions for cam
         myWebView.setWebViewClient(new WebViewClient());
         myWebView.setWebChromeClient(new WebChromeClient() {
             final String TAG = "camaccess";
-
-            // Grant permissions for cam
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
                 Log.d(TAG, "onPermissionRequest");
@@ -54,14 +53,22 @@ public class ViewBabyActivity extends AppCompatActivity {
                 });
             }
         });
-        myWebView.loadUrl("https://watchmybaby-52d18.firebaseapp.com/");
-//        myWebView.loadUrl("https://www.google.lk");
-//        myWebView.loadUrl("javascript:initiateCall(\"chathuMobia\", \"Lapchathu\")");
-        myWebView.loadUrl("javascript:initiateCall1()");
+        myWebView.loadUrl("https://watchmybaby-52d18.firebaseapp.com/videoCallView.html");
+        final String uname = "watchMyBabyMobile" + userName;
+        final String callName = "watchMyBabyWeb" + userName;
+
+        myWebView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                myWebView.loadUrl("javascript:initiateCall('"+uname+"', '"+callName+"');");
+            }
+        });
+
     }
 
     public void changeColor(View view) {
-        myWebView.loadUrl("javascript:changeBackgroundColor()");
+//        myWebView.loadUrl("javascript:changeBackgroundColor()");
+        String color = "red";
+        myWebView.loadUrl("javascript:changeBackgroundColor1('"+color+"')");
         Log.d("changeColor", "Color change request");
     }
 }

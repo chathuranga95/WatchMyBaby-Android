@@ -48,11 +48,11 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
     ArrayList<String> fileNameList = new ArrayList<>();
     Calendar calendar;
     TimePickerDialog timepickerdialog;
-    String format; //time format
+
     Button btnSetTime;
     ListView listView;
     User user;
-    Map<String, String> fileDetalis;
+    Map<String, Integer> fileDetalis;
     int selectedIndex;
     String userName;
 
@@ -163,27 +163,22 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                        if (hourOfDay == 0) {
-                            hourOfDay += 12;
-                            format = "AM";
-                        } else if (hourOfDay == 12) {
-                            format = "PM";
-                        } else if (hourOfDay > 12) {
-                            hourOfDay -= 12;
-                            format = "PM";
-                        } else {
-                            format = "AM";
-                        }
-                        Log.d("timechoose", hourOfDay + ":" + minute + format);
+                        Log.d("timechoose", hourOfDay + ":" + minute);
                         Log.d("timechoose", fileNameList.get(selectedIndex) + " changed");
                         changeTimeOnDB(hourOfDay, minute);
                     }
-                }, hour, min, false);
+                }, hour, min, true);
         timepickerdialog.show();
     }
 
     private void changeTimeOnDB(int hour, int min){
-        user.getSettings().editFileTime(fileNameList.get(selectedIndex),hour + ":" + min + format);
+        if(min<10){
+            user.getSettings().editFileTime(fileNameList.get(selectedIndex), Integer.parseInt(hour +"0"+ min));
+        }
+        else{
+            user.getSettings().editFileTime(fileNameList.get(selectedIndex), Integer.parseInt(hour +""+ min));
+        }
+
 
         final String TAG = "changeTimeOnDB";
         // get database instance and slot

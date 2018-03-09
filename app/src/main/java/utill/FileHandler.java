@@ -82,7 +82,7 @@ public class FileHandler {
 
     private User addNewAttributes(User user,String fileName){
         UserAppSettings settings = new UserAppSettings();
-        settings.addFile(fileName,"00:00");
+        settings.addFile(fileName,0000);
         user.setSettings(settings);
         return user;
     }

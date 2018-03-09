@@ -33,6 +33,7 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 import utill.NotificationService;
+import utill.SMSHandler;
 import utill.WebRTC;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,9 +48,11 @@ public class MainActivity extends AppCompatActivity {
         //retrieve username
         userName = getIntent().getStringExtra("userName");
 
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         //Create a webRTC object and start listening to the user specified channel
-        WebRTC webRTC = new WebRTC(MainActivity.this);
-        webRTC.startListening(userName);
+        WebRTC.setParas(MainActivity.this, mNotificationManager, userName);
+        startService(new Intent(this, NotificationService.class));
 
         //TODO: append notification here
         ListView listView = (ListView) findViewById(R.id.lstNotifications);
@@ -76,25 +79,14 @@ public class MainActivity extends AppCompatActivity {
 //        startService(new Intent(this, NotificationService.class));
 //    }
 
-    //publish a given message on the notification area
-    //TODO: implement this part in a seperate class
-    public void pushNotification(String msg){
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(R.drawable.cute_ball_info)
-                        .setContentTitle("Watch My Baby")
-                        .setContentText(msg);
-
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(001, mBuilder.build());
-    }
-
     public void logout(View view) {
-
+        SMSHandler smsHandler = new SMSHandler();
+        smsHandler.sendSMS("0713604485","SMS handler test");
     }
 
     public void viewBaby(View view) {
         Intent myIntent = new Intent(MainActivity.this, ViewBabyActivity.class);
+        myIntent.putExtra("userName",userName);
         startActivity(myIntent);
     }
 

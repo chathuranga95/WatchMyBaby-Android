@@ -1,11 +1,22 @@
 package utill;
 
+import android.app.AlarmManager;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
+import android.media.MediaPlayer;
+import android.os.IBinder;
+import android.os.SystemClock;
+import android.os.Vibrator;
+import android.provider.Settings;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.example.chathus.watchmybaby.MainActivity;
+import com.example.chathus.watchmybaby.R;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
 import com.pubnub.api.callbacks.SubscribeCallback;
@@ -20,23 +31,31 @@ import java.util.Arrays;
  * Created by chathuranga on 2/21/2018.
  */
 
-public class WebRTC {
+public class WebRTC{
 
-    MainActivity activity;
+    static MainActivity activity;
+    static NotificationManager mNotificationManager;
+    static  String userName;
+    final static String TAG = "msgcheck";
+    static Vibrator v;
 
-    public WebRTC(MainActivity activity) {
-        this.activity = activity;
+    public static void setParas(MainActivity act, NotificationManager nm, String uname) {
+        activity = act;
+        mNotificationManager = nm;
+        userName = uname;
+        v = (Vibrator) activity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+        Log.d(TAG, "paras inited");
     }
 
     //start listening to the channel specified to the given user,
     //feed the notification to the main activity again
     //TODO: implement in a service
-    public void startListening(String userName) {
+    public static void startListening() {
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setPublishKey("pub-c-616fc02a-063a-41cd-8185-dcf5ba936b2a");
         pnConfiguration.setSubscribeKey("sub-c-f72b3372-f5da-11e7-8098-329148162fa8");
         PubNub pubnub = new PubNub(pnConfiguration);
-        final String TAG = "msgcheck";
+
 
         /* Subscribe to the demo_tutorial channel */
         try {
@@ -54,8 +73,21 @@ public class WebRTC {
                     String msg = message.getMessage().toString();
                     Log.d(TAG, msg);
 
-                    //NotificationService.setMsg(msg);
-                    activity.pushNotification(msg);
+                    //push msg to the notification area.
+                    NotificationCompat.Builder mBuilder =
+                            new NotificationCompat.Builder(activity.getApplicationContext())
+                                    .setSmallIcon(R.drawable.cute_ball_info)
+                                    .setContentTitle("Watch My Baby")
+                                    .setContentText(msg);
+                    mNotificationManager.notify(001, mBuilder.build());
+
+                    //vibrate phone
+                    v.vibrate(500);
+
+                    //ring the defaut ringtone
+                    //TODO: replace media player code with phone ringing code.
+                    MediaPlayer player = MediaPlayer.create(activity, Settings.System.DEFAULT_NOTIFICATION_URI);
+                    player.start();
                 }
 
                 @Override
