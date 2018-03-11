@@ -38,7 +38,8 @@
             android:layout_alignBottom="@+id/imageButton"
             android:layout_marginStart="34dp"
             android:layout_toEndOf="@+id/imageButton"
-            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel"
+            android:onClick="hangup"/>
 
         <ImageButton
             android:id="@+id/imageButton3"

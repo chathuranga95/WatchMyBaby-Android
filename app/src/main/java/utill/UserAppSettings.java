@@ -37,6 +37,10 @@ public class UserAppSettings {
         fileList.put(fileName, time);
     }
 
+    public void removeFile(String fileName){
+        fileList.remove(fileName);
+    }
+
     public int getTel1() {
         return tel1;
     }

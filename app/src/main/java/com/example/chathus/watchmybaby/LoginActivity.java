@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import utill.ProductCipher;
 import utill.User;
 
 public class LoginActivity extends AppCompatActivity {
@@ -35,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         final Context context = getApplicationContext();
 
         //get user inputs
-        userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString();
+        userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString().trim();
 
 
         // get database instance and slot
@@ -91,11 +92,13 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public boolean compare(User user) {
-        //compare password with database data
-        String psw = ((EditText) findViewById(R.id.txtPass)).getText().toString();
+        //compare encrypted password with database data
+        String psw = ((EditText) findViewById(R.id.txtPass)).getText().toString().trim();
+        ProductCipher ps = new ProductCipher();
+        String encPsw =  ps.Encrypt("watch my baby username " + userName,psw);
         if (user == null) {
             return false;
-        } else if (user.getPassword().equals(psw)) {
+        } else if (user.getPassword().equals(encPsw)) {
             return true;
         } else {
             return false;

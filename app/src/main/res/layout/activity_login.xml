@@ -61,7 +61,7 @@
             android:layout_alignBottom="@+id/lblPass"
             android:layout_alignStart="@+id/txtUserName"
             android:ems="10"
-            android:inputType="textPassword" />
+            android:inputType="numberPassword" />
 
         <Button
             android:id="@+id/btnLogin"

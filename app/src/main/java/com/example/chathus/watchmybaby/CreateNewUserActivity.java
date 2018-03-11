@@ -9,8 +9,11 @@ import android.widget.Toast;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import utill.ProductCipher;
 import utill.User;
 import utill.Validate;
+
+
 
 public class CreateNewUserActivity extends AppCompatActivity {
 
@@ -25,12 +28,15 @@ public class CreateNewUserActivity extends AppCompatActivity {
     public void create(View view) {
 
         //make User object
-        String userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString();
+        String userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString().trim();
         String name = ((EditText) findViewById(R.id.txtName)).getText().toString();
-        String password = ((EditText) findViewById(R.id.txtPass)).getText().toString();
-        String retypedPassword = ((EditText) findViewById(R.id.txtConfirmPass)).getText().toString();
+        String password = ((EditText) findViewById(R.id.txtPass)).getText().toString().trim();
+        String retypedPassword = ((EditText) findViewById(R.id.txtConfirmPass)).getText().toString().trim();
         String email = ((EditText) findViewById(R.id.txtEmail)).getText().toString();
         int tel = Integer.parseInt(((EditText) findViewById(R.id.txtPhone)).getText().toString());
+
+        ProductCipher ps = new ProductCipher();
+        String encPsw = ps.Encrypt("watch my baby username " + userName, password);
 
         //validate user details
         Validate validation = new Validate();
@@ -40,7 +46,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
                 if (validation.isTelValid(tel)) {
                     if (validation.isPswMatch(password, retypedPassword)) {
                         //create a new User object
-                        User user = new User(name, userName, password, email, tel);
+                        User user = new User(name, userName, encPsw, email, tel);
 
                         // get database instance and slot
                         FirebaseDatabase database = FirebaseDatabase.getInstance();

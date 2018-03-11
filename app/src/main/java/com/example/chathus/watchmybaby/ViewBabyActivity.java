@@ -71,4 +71,9 @@ public class ViewBabyActivity extends AppCompatActivity {
         myWebView.loadUrl("javascript:changeBackgroundColor1('"+color+"')");
         Log.d("changeColor", "Color change request");
     }
+
+    public void hangup(View view) {
+        myWebView.loadUrl("javascript:hangUpCall()");
+        Log.d("videoCallHangup", "Call disconnected...");
+    }
 }

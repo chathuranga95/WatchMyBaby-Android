@@ -34,13 +34,16 @@ public class FileHandler {
     Context context;
     String userName;
     Map<String, String> fileDetails = null;
-    public FileHandler(Context context,String userName){
+    String fileName;
+    private User user;
+
+    public FileHandler(Context context, String userName) {
         this.context = context;
         this.userName = userName;
     }
 
 
-    public void setFileDataOnDB(final String fileName, String userName){
+    public void setFileDataOnDB(final String fileName, String userName) {
         final String TAG = "FileMetaData";
 
 
@@ -49,20 +52,23 @@ public class FileHandler {
         final DatabaseReference myRef = database.getReference(userName);
         Log.d(TAG, "instance and ref retrieved");
 
-        myRef.addValueEventListener(new ValueEventListener() {
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // Create User Object out of database data
-                User user = (User) dataSnapshot.getValue(User.class);
-                Log.d(TAG, "user object received...");
 
-                //add the filename to the settings section
-                user = addNewAttributes(user,fileName);
-                Log.d(TAG, "user object modified...");
-                //Log.d(TAG, "Value is: " + user.getDetailString());
+                synchronized (new Object()) {
+                    // Create User Object out of database data
+                    user = (User) dataSnapshot.getValue(User.class);
+                    Log.d(TAG, "user object received...");
 
-                //write new User object to the database
-                myRef.setValue(user);
+                    //add the filename to the settings section
+                    user = addNewAttributes(user, fileName);
+                    Log.d(TAG, "user object modified...");
+                    //write new User object to the database
+                    myRef.setValue(user);
+                }
+
             }
 
             @Override
@@ -71,18 +77,67 @@ public class FileHandler {
                 Log.w(TAG, "Failed to read value.", error.toException());
 
                 // show a toast to user
-                CharSequence text = "Login Error, Please Try again!";
+                CharSequence text = "Error, Please Try again!";
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
         });
 
+
     }
 
-    private User addNewAttributes(User user,String fileName){
+    private void deleteFileDataOnDB(final String fileName, String userName) {
+        // get database instance and slot
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final DatabaseReference myRef = database.getReference(userName);
+
+        final String TAG = "FileMetaData";
+
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                synchronized (new Object()) {
+                    // Create User Object out of database data
+                    user = (User) dataSnapshot.getValue(User.class);
+                    Log.d(TAG, "user object received...");
+
+                    //delete the filename from the settings section
+                    user = deleteAttributes(user, fileName);
+                    Log.d(TAG, "user object modified...");
+                    //Log.d(TAG, "Value is: " + user.getDetailString());
+
+                    //write new User object to the database
+                    myRef.setValue(user);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value, log details.
+                Log.w(TAG, "Failed to read value.", error.toException());
+
+                // show a toast to user
+                CharSequence text = "Error, Please Try again!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+            }
+        });
+    }
+
+    private User addNewAttributes(User user, String fileName) {
         UserAppSettings settings = new UserAppSettings();
-        settings.addFile(fileName,0000);
+        settings.addFile(fileName, 0000);
+        user.setSettings(settings);
+        return user;
+    }
+
+    private User deleteAttributes(User user, String fileName) {
+        UserAppSettings settings = new UserAppSettings();
+        settings.removeFile(fileName);
         user.setSettings(settings);
         return user;
     }
@@ -92,11 +147,10 @@ public class FileHandler {
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReference();
 
-        final String filename = file.getLastPathSegment();
+        fileName = file.getLastPathSegment();
+        fileName = fileName.substring(0, fileName.length() - 4);
 
-
-        //Uri file = Uri.fromFile(new File("/sdcard/Subani_Harshani_Ekama_Eka_Warak.mp3"));
-        StorageReference abcfileRef = storageRef.child("songs/" + filename);
+        StorageReference abcfileRef = storageRef.child("songs/" + fileName);
         UploadTask uploadTask;
         uploadTask = abcfileRef.putFile(file);
 
@@ -104,8 +158,8 @@ public class FileHandler {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                Log.d("File-upload","Upload is " + progress + "% done");
-                ((TextView) ((Activity)context).findViewById(R.id.lblProgress)).setText("Upload is " + progress + "% done");
+                Log.d("File-upload", "Upload is " + progress + "% done");
+                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload is " + progress + "% done");
             }
         });
 
@@ -120,10 +174,20 @@ public class FileHandler {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                Log.d("File-upload","Upload completed");
-                ((TextView) ((Activity)context).findViewById(R.id.lblProgress)).setText("Upload Completed");
-                setFileDataOnDB(filename,userName);
+                Log.d("File-upload", "Upload completed");
+                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload Completed");
+                setFileDataOnDB(fileName, userName);
             }
         });
+    }
+
+    public void deleteFile(String fileName) {
+        //delete logic here
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        // Create a storage reference from our app
+        StorageReference storageRef = storage.getReference();
+        StorageReference abcfileRef = storageRef.child("songs/" + fileName);
+        abcfileRef.delete();
+        deleteFileDataOnDB(fileName, userName);
     }
 }

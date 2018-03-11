@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -50,6 +51,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
     TimePickerDialog timepickerdialog;
 
     Button btnSetTime;
+    ImageButton btnFileDelete;
     ListView listView;
     User user;
     Map<String, Integer> fileDetalis;
@@ -61,11 +63,13 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_schecule_lullaby);
         btnSetTime = (Button) findViewById(R.id.btnSetTime);
+        btnFileDelete = (ImageButton) findViewById(R.id.btnDel);
         listView = (ListView) findViewById(R.id.lstFiles);
         setTitle("Schedule Lullabies");
         userName = getIntent().getStringExtra("userName");
         //disable set time button at loading
         btnSetTime.setEnabled(false);
+        btnFileDelete.setEnabled(false);
 
         //refresh file list
         refreshFileList();
@@ -81,6 +85,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 btnSetTime.setEnabled(true);
+                btnFileDelete.setEnabled(true);
                 Toast.makeText(ScheculeLullabyActivity.this, values.get(position), Toast.LENGTH_SHORT).show();
                 selectedIndex = position;
             }
@@ -97,16 +102,21 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         final DatabaseReference myRef = database.getReference(userName);
         Log.d(TAG, "instance and ref retrieved");
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Create User Object out of database data
-                user = (User) dataSnapshot.getValue(User.class);
-                Log.d(TAG, "user object received...");
-                fileDetalis = user.getSettings().getFileList();
-                for (String key : fileDetalis.keySet()) {
-                    values.add(key + "   :" + fileDetalis.get(key));
-                    fileNameList.add(key);
+                try {
+                    user = (User) dataSnapshot.getValue(User.class);
+                    Log.d(TAG, "user object received...");
+                    fileDetalis = user.getSettings().getFileList();
+                    for (String key : fileDetalis.keySet()) {
+                        values.add(key + "   :" + fileDetalis.get(key));
+                        fileNameList.add(key);
+                    }
+                }
+                catch (Exception ex){
+                    //do nothing
                 }
             }
 
@@ -186,7 +196,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         final DatabaseReference myRef = database.getReference(userName);
         Log.d(TAG, "instance and ref retrieved");
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //write new User object to the database
@@ -207,4 +217,11 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         });
     }
 
+    public void fileDelete(View view) {
+        String fileName = fileNameList.get(selectedIndex);
+        FileHandler fileHandler = new FileHandler(this, getIntent().getStringExtra("userName"));
+        fileHandler.deleteFile(fileName);
+        refreshFileList();
+        btnFileDelete.setEnabled(false);
+    }
 }
