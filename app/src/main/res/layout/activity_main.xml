@@ -58,11 +58,20 @@
             android:id="@+id/btnViewBaby"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/btnSettings"
-            android:layout_below="@+id/btnSettings"
-            android:layout_marginTop="27dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignStart="@+id/btnSchedule"
+            android:layout_marginBottom="20dp"
             android:onClick="viewBaby"
             android:text="View Baby" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/btnViewBaby"
+            android:layout_alignEnd="@+id/btnSettings"
+            android:text="clear"
+            android:onClick="clearNotifications"/>
 
     </RelativeLayout>
 

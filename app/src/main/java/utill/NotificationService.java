@@ -39,15 +39,7 @@ public class NotificationService extends Service {
         }
         @Override
         public void handleMessage(Message msg) {
-            // Normally we would do some work here, like download a file.
-            // For our sample, we just sleep for 5 seconds.
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                // Restore interrupt status.
-//                Thread.currentThread().interrupt();
-//            }
-
+            //listening to the webRTC class
             WebRTC.startListening();
 
             // Stop the service using the startId, so that we don't stop

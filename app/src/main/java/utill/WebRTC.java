@@ -26,18 +26,22 @@ import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import java.util.Arrays;
+import java.util.Calendar;
+
+import data.LocalDatabaseHandler;
 
 /**
  * Created by chathuranga on 2/21/2018.
  */
 
-public class WebRTC{
+public class WebRTC {
 
     static MainActivity activity;
     static NotificationManager mNotificationManager;
-    static  String userName;
+    static String userName;
     final static String TAG = "msgcheck";
     static Vibrator v;
+
 
     public static void setParas(MainActivity act, NotificationManager nm, String uname) {
         activity = act;
@@ -80,6 +84,29 @@ public class WebRTC{
                                     .setContentTitle("Watch My Baby")
                                     .setContentText(msg);
                     mNotificationManager.notify(001, mBuilder.build());
+
+
+                    //setup the current date and time
+                    Calendar calendar = Calendar.getInstance();
+
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int min = calendar.get(Calendar.MINUTE);
+                    int sec = calendar.get(Calendar.SECOND);
+                    int dd = calendar.get(Calendar.DAY_OF_MONTH);
+                    int mm = calendar.get(Calendar.MONTH);
+                    int yy = calendar.get(Calendar.YEAR);
+
+                    String date = yy + "-" + mm + "-" + dd;
+                    String time = hour + ":" + min + ":" + sec;
+
+                    synchronized (new Object()) {
+                        //save notification on the local database
+                        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(activity.getApplicationContext());
+                        dbHandler.saveNewNotification(userName, date, time, "baby cried");
+                    }
+
+                    MainActivity ac = new MainActivity();
+                    ac.refreshNotificationView();
 
                     //vibrate phone
                     v.vibrate(500);
