@@ -17,10 +17,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import utill.ProductCipher;
 import utill.User;
+import data.LocalDatabaseHandler;
 
 public class LoginActivity extends AppCompatActivity {
     private String userName;
-
+    LocalDatabaseHandler dbHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,19 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         setTitle("Login");
         findViewById(R.id.txtUserName).requestFocus();
+
+        dbHandler = new LocalDatabaseHandler(this); //new database handler object
+
+        userName = dbHandler.getLoggedUser(); //check if there is a logged user.
+        if (userName != null) { //if so, auto log in.
+            autoLogin(userName);
+        }
+    }
+
+    private void autoLogin(String userName) {
+        Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
+        myIntent.putExtra("userName", userName);
+        startActivity(myIntent);
     }
 
     public void Login(View view) {
@@ -45,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         Log.d(TAG, "instance and ref retrieved");
 
 
-        myRef.addValueEventListener(new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // Create User Object out of database data
@@ -56,9 +70,12 @@ public class LoginActivity extends AppCompatActivity {
                 //Login logic here
                 if (compare(user)) {
 
-                    //Login success, show main page.
+                    //Login success, save the username for future auto logins
+                    dbHandler.saveLogin(userName);
+
+                    //show main page.
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
-                    myIntent.putExtra("userName",userName);
+                    myIntent.putExtra("userName", userName);
                     startActivity(myIntent);
 
 
@@ -95,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
         //compare encrypted password with database data
         String psw = ((EditText) findViewById(R.id.txtPass)).getText().toString().trim();
         ProductCipher ps = new ProductCipher();
-        String encPsw =  ps.Encrypt("watch my baby username " + userName,psw);
+        String encPsw = ps.Encrypt("watch my baby username " + userName, psw);
         if (user == null) {
             return false;
         } else if (user.getPassword().equals(encPsw)) {

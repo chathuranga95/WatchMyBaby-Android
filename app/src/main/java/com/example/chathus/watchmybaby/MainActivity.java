@@ -32,6 +32,7 @@ import org.json.JSONObject;
 
 import java.util.Arrays;
 
+import data.LocalDatabaseHandler;
 import utill.NotificationService;
 import utill.SMSHandler;
 import utill.WebRTC;
@@ -80,8 +81,10 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
     public void logout(View view) {
-        SMSHandler smsHandler = new SMSHandler();
-        smsHandler.sendSMS("0713604485","SMS handler test");
+        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(this);
+        dbHandler.saveLogout(userName);
+        Intent myIntent = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(myIntent);
     }
 
     public void viewBaby(View view) {
