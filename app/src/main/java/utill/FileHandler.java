@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.TextView;
@@ -44,13 +45,13 @@ public class FileHandler {
 
 
     public void setFileDataOnDB(final String fileName, String userName) {
-        final String TAG = "FileMetaData";
+        final String TAG = "File-upload";
 
 
         // get database instance and slot
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         final DatabaseReference myRef = database.getReference(userName);
-        Log.d(TAG, "instance and ref retrieved");
+        Log.d(TAG, "file handler,set file data on db, instance and ref retrieved");
 
 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -61,6 +62,7 @@ public class FileHandler {
                     // Create User Object out of database data
                     user = (User) dataSnapshot.getValue(User.class);
                     Log.d(TAG, "user object received...");
+                    Log.d(TAG, "size  " +  user.getSettings().getFileList().size());
 
                     //add the filename to the settings section
                     user = addNewAttributes(user, fileName);
@@ -129,37 +131,37 @@ public class FileHandler {
     }
 
     private User addNewAttributes(User user, String fileName) {
-        UserAppSettings settings = new UserAppSettings();
+        UserAppSettings settings = user.getSettings();
         settings.addFile(fileName, 0000);
         user.setSettings(settings);
         return user;
     }
 
     private User deleteAttributes(User user, String fileName) {
-        UserAppSettings settings = new UserAppSettings();
+        UserAppSettings settings = user.getSettings();
         settings.removeFile(fileName);
         user.setSettings(settings);
         return user;
     }
 
-    public void upload(Uri file) {
+    public void upload(Uri file, final String lullabyTitle) {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReference();
 
-        fileName = file.getLastPathSegment();
-        fileName = fileName.substring(0, fileName.length() - 4);
+//        fileName = file.getLastPathSegment();
+//        fileName = fileName.substring(0, fileName.length() - 4);
 
-        StorageReference abcfileRef = storageRef.child("songs/" + fileName);
+        StorageReference abcfileRef = storageRef.child("songs/" + lullabyTitle);
         UploadTask uploadTask;
         uploadTask = abcfileRef.putFile(file);
 
         uploadTask.addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                int progress = (int)((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
                 Log.d("File-upload", "Upload is " + progress + "% done");
-                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload is " + progress + "% done");
+                //((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload is " + progress  + "% done");
             }
         });
 
@@ -168,6 +170,7 @@ public class FileHandler {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
+                Log.d("File-upload", exception.toString());
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
@@ -175,8 +178,10 @@ public class FileHandler {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 Log.d("File-upload", "Upload completed");
-                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload Completed");
-                setFileDataOnDB(fileName, userName);
+                //((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload Completed");
+  //              SystemClock.sleep(500);
+//                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("");
+                setFileDataOnDB(lullabyTitle, userName);
             }
         });
     }

@@ -20,11 +20,14 @@ import utill.User;
 import data.LocalDatabaseHandler;
 
 public class LoginActivity extends AppCompatActivity {
+
     private String userName;
     LocalDatabaseHandler dbHandler;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         setTitle("Login");
@@ -32,26 +35,28 @@ public class LoginActivity extends AppCompatActivity {
 
         dbHandler = new LocalDatabaseHandler(this); //new database handler object
 
+        context = getApplicationContext(); //set context
+
         userName = dbHandler.getLoggedUser(); //check if there is a logged user.
         if (userName != null) { //if so, auto log in.
             autoLogin(userName);
         }
     }
 
+    //auto login needs no verification.
     private void autoLogin(String userName) {
         Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
         myIntent.putExtra("userName", userName);
         startActivity(myIntent);
     }
 
+    //Login button click method
     public void Login(View view) {
 
         final String TAG = "firebase-login";
-        final Context context = getApplicationContext();
 
         //get user inputs
         userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString().trim();
-
 
         // get database instance and slot
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -65,7 +70,6 @@ public class LoginActivity extends AppCompatActivity {
                 // Create User Object out of database data
                 User user = (User) dataSnapshot.getValue(User.class);
                 Log.d(TAG, "user object received...");
-                //Log.d(TAG, "Value is: " + user.getDetailString());
 
                 //Login logic here
                 if (compare(user)) {
@@ -129,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         findViewById(R.id.txtUserName).requestFocus(); //focus Usename textbox
     }
 
+    //show new user create page
     public void signIn(View view) {
         Intent myIntent = new Intent(LoginActivity.this, CreateNewUserActivity.class);
         startActivity(myIntent);

@@ -23,79 +23,36 @@ import com.example.chathus.watchmybaby.R;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import data.LocalDatabaseHandler;
+
+import static utill.WebRTC.userName;
+
 /**
  * Created by chathuranga on 2/21/2018.
  */
 public class NotificationService extends Service {
 
-    //TODO: after app is dead, make this still run
-    private Looper mServiceLooper;
-    private ServiceHandler mServiceHandler;
-
-    // Handler that receives messages from the thread
-    private final class ServiceHandler extends Handler {
-        public ServiceHandler(Looper looper) {
-            super(looper);
-        }
-        @Override
-        public void handleMessage(Message msg) {
-            //listening to the webRTC class
-            WebRTC.startListening();
-
-            // Stop the service using the startId, so that we don't stop
-            // the service in the middle of handling another job
-            stopSelf(msg.arg1);
-        }
-    }
-
+    @Nullable
     @Override
-    public void onCreate() {
-        // Start up the thread running the service.  Note that we create a
-        // separate thread because the service normally runs in the process's
-        // main thread, which we don't want to block.  We also make it
-        // background priority so CPU-intensive work will not disrupt our UI.
-        HandlerThread thread = new HandlerThread("ServiceStartArguments");
-        thread.start();
-
-        // Get the HandlerThread's Looper and use it for our Handler
-        mServiceLooper = thread.getLooper();
-        mServiceHandler = new ServiceHandler(mServiceLooper);
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
 
-        // For each start request, send a message to start a job and deliver the
-        // start ID so we know which request we're stopping when we finish the job
-        Message msg = mServiceHandler.obtainMessage();
-        msg.arg1 = startId;
-        mServiceHandler.sendMessage(msg);
+        Thread thread = new Thread(new WebRTC()); //different thread for the WebRTC listener
 
-        // If we get killed, after returning from here, restart
-        return START_STICKY;
-    }
+        //prepare parameters for WebRTC object
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(getApplicationContext());
+        String uname = dbHandler.getLoggedUser();
 
-    @Override
-    public IBinder onBind(Intent intent) {
-        // We don't provide binding, so return null
-        return null;
-    }
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-
-        Intent restartService = new Intent(getApplicationContext(),
-                this.getClass());
-        restartService.setPackage(getPackageName());
-        PendingIntent restartServicePI = PendingIntent.getService(
-                getApplicationContext(), 1, restartService,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        //Restart the service once it has been killed android
-
-
-        AlarmManager alarmService = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-        alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() +100, restartServicePI);
-
+        //initialize webRTC and start listening to the user specified channel, if the user is not logged-out
+        if(uname != null) {
+            WebRTC.setParas(getApplicationContext(), mNotificationManager, uname);
+            thread.run();
+        }
+        return START_STICKY;//super.onStartCommand(intent, flags, startId);
     }
 }

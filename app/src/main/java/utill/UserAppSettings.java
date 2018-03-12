@@ -29,7 +29,15 @@ public class UserAppSettings {
     }
 
     public void addFile(String fileName, int time) {
+
+        for (String file: fileList.keySet()) {
+            System.out.println(file);
+        }
         fileList.put(fileName,time);
+        for (String file: fileList.keySet()) {
+            System.out.println(file);
+        }
+        System.out.println();
     }
 
     public void editFileTime(String fileName, int time){

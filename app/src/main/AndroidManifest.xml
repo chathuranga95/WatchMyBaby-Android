@@ -49,7 +49,10 @@
     <activity android:name=".ScheculeLullabyActivity" />
     <activity android:name=".SettingsActivity"></activity>
 
-        <service android:name="utill.NotificationService" />
+        <service
+            android:name="utill.NotificationService"
+            android:enabled="true"
+            android:exported="true"/>
 </application>
     <uses-permission android:name="android.permission.SEND_SMS">
     </uses-permission>

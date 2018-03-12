@@ -1,19 +1,16 @@
 package utill;
 
-import android.app.AlarmManager;
+
+import android.app.Application;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
-import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.example.chathus.watchmybaby.MainActivity;
 import com.example.chathus.watchmybaby.R;
@@ -27,6 +24,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 import data.LocalDatabaseHandler;
 
@@ -34,26 +32,36 @@ import data.LocalDatabaseHandler;
  * Created by chathuranga on 2/21/2018.
  */
 
-public class WebRTC {
+public class WebRTC extends Thread {
 
-    static MainActivity activity;
     static NotificationManager mNotificationManager;
     static String userName;
     final static String TAG = "msgcheck";
-    static Vibrator v;
+    static Context context;
 
+//    public WebRTC(MainActivity act, NotificationManager nm, String uname){
+//        activity = act;
+//        mNotificationManager = nm;
+//        userName = uname;
+//        v = (Vibrator) activity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
+//        Log.d(TAG, "paras inited");
+//    }
 
-    public static void setParas(MainActivity act, NotificationManager nm, String uname) {
-        activity = act;
+    public void run() {
+        startListening();
+        Log.d(TAG, "started listening");
+    }
+
+    public static void setParas(Context cnt, NotificationManager nm, String uname) {
+        context = cnt;
         mNotificationManager = nm;
         userName = uname;
-        v = (Vibrator) activity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
         Log.d(TAG, "paras inited");
     }
 
     //start listening to the channel specified to the given user,
     //feed the notification to the main activity again
-    //TODO: implement in a service
+
     public static void startListening() {
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setPublishKey("pub-c-616fc02a-063a-41cd-8185-dcf5ba936b2a");
@@ -61,7 +69,7 @@ public class WebRTC {
         PubNub pubnub = new PubNub(pnConfiguration);
 
 
-        /* Subscribe to the demo_tutorial channel */
+        // Subscribe to the channel
         try {
             pubnub.addListener(new SubscribeCallback() {
                 @Override
@@ -77,12 +85,20 @@ public class WebRTC {
                     String msg = message.getMessage().toString();
                     Log.d(TAG, msg);
 
+                    //vibrator pattern
+                    long[] patt = new long[3];
+                    patt[0] = 200;
+                    patt[1] = 100;
+                    patt[2] = 200;
+
                     //push msg to the notification area.
-                    NotificationCompat.Builder mBuilder =
-                            new NotificationCompat.Builder(activity.getApplicationContext())
-                                    .setSmallIcon(R.drawable.cute_ball_info)
-                                    .setContentTitle("Watch My Baby")
-                                    .setContentText(msg);
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.cute_ball_info)
+                            .setContentTitle("title")
+                            .setContentText(msg)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                            .setVibrate(patt);
                     mNotificationManager.notify(001, mBuilder.build());
 
 
@@ -101,20 +117,14 @@ public class WebRTC {
 
                     synchronized (new Object()) {
                         //save notification on the local database
-                        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(activity.getApplicationContext());
+                        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(context);
                         dbHandler.saveNewNotification(userName, date, time, "baby cried");
                     }
 
-                    MainActivity ac = new MainActivity();
-                    ac.refreshNotificationView();
+//                    MainActivity ac = new MainActivity();
+//                    ac.refreshNotificationView();
 
-                    //vibrate phone
-                    v.vibrate(500);
 
-                    //ring the defaut ringtone
-                    //TODO: replace media player code with phone ringing code.
-                    MediaPlayer player = MediaPlayer.create(activity, Settings.System.DEFAULT_NOTIFICATION_URI);
-                    player.start();
                 }
 
                 @Override

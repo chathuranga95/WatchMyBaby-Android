@@ -13,8 +13,6 @@ import utill.ProductCipher;
 import utill.User;
 import utill.Validate;
 
-
-
 public class CreateNewUserActivity extends AppCompatActivity {
 
     private static DatabaseReference ref = null;
@@ -27,7 +25,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
 
     public void create(View view) {
 
-        //make User object
+        //collect data to create the user object
         String userName = ((EditText) findViewById(R.id.txtUserName)).getText().toString().trim();
         String name = ((EditText) findViewById(R.id.txtName)).getText().toString();
         String password = ((EditText) findViewById(R.id.txtPass)).getText().toString().trim();
@@ -35,6 +33,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
         String email = ((EditText) findViewById(R.id.txtEmail)).getText().toString();
         int tel = Integer.parseInt(((EditText) findViewById(R.id.txtPhone)).getText().toString());
 
+        //encrypt some text using password.
         ProductCipher ps = new ProductCipher();
         String encPsw = ps.Encrypt("watch my baby username " + userName, password);
 
@@ -74,10 +73,6 @@ public class CreateNewUserActivity extends AppCompatActivity {
             ((EditText) findViewById(R.id.txtUserName)).setText("");
             findViewById(R.id.txtUserName).requestFocus();
         }
-    }
-
-    public static DatabaseReference getRef() {
-        return ref;
     }
 
     public void showToast(String msg) {
