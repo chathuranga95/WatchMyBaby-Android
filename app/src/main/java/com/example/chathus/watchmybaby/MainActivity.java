@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import data.LocalDatabaseHandler;
+import utill.BooVariable;
 import utill.NotificationService;
 import utill.SMSHandler;
 import utill.WebRTC;
@@ -22,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
     LocalDatabaseHandler dbHandler;
     ListView listView;
     NotificationManager mNotificationManager;
-
-
+    BooVariable bv;
+    final String TAG = "MainActivityInfo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,24 +38,49 @@ public class MainActivity extends AppCompatActivity {
         dbHandler = new LocalDatabaseHandler(this);
 
         //retrieve username
-        userName = getIntent().getStringExtra("userName");
+        userName = dbHandler.getLoggedUser();
+
+        //redirect if the user is not logged in i.e. username is empty
+        if(userName==null){
+            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            return;
+        }
 
         //notification service object
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        WebRTC.setMainActivity(MainActivity.this);
+        WebRTC.setSMSOnOff(true);
 
         //start notification listening service.
         startService(new Intent(this, NotificationService.class));
 
         //refresh notification viewing list view
         refreshNotificationView();
+
+        Log.d(TAG," main activity on create called");
+
+
+//        bv.setListener(new BooVariable.ChangeListener()
+//        {
+//            @Override
+//            public void onChange () {
+//                Toast.makeText(MainActivity.this, "blah", Toast.LENGTH_LONG).show();
+//                //refreshNotificationView();
+//            }
+//        });
     }
 
     //fill up listview with last 10 notifications.
     public void refreshNotificationView() {
         listView = (ListView) findViewById(R.id.lstNotifications);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(userName));
+                android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(dbHandler.getLoggedUser()));
         listView.setAdapter(adapter);
+        Log.d(TAG,"username " + userName);
+        Log.d(TAG,"notification view refresh called.");
     }
 
 //    @Override

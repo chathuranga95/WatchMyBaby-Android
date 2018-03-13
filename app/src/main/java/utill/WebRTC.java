@@ -3,7 +3,9 @@ package utill;
 
 import android.app.Application;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.SystemClock;
 import android.os.Vibrator;
@@ -38,6 +40,14 @@ public class WebRTC extends Thread {
     static String userName;
     final static String TAG = "msgcheck";
     static Context context;
+    static BooVariable bv;
+    static MainActivity mainActivity;
+    static int cryCounter;
+    static long lastCryTime;
+    static boolean isSMSON;
+    static String smsNum1;
+    static String smsNum2;
+
 
 //    public WebRTC(MainActivity act, NotificationManager nm, String uname){
 //        activity = act;
@@ -56,11 +66,53 @@ public class WebRTC extends Thread {
         context = cnt;
         mNotificationManager = nm;
         userName = uname;
+        cryCounter = 0;
+        lastCryTime = (Calendar.getInstance()).getTimeInMillis();
         Log.d(TAG, "paras inited");
+        isSMSON = false;
     }
 
+    public static void setBooForWebRTC(BooVariable booVariable) {
+        bv = booVariable;
+    }
+
+    public static void setSMSSettings(boolean sms, String n1, String n2) {
+        isSMSON = sms;
+        smsNum1 = n1;
+        smsNum2 = n2;
+    }
+
+    public static void setSMSOnOff(boolean sms) {
+        isSMSON = sms;
+    }
+
+    public static void setMainActivity(MainActivity ma) {
+        mainActivity = ma;
+    }
     //start listening to the channel specified to the given user,
     //feed the notification to the main activity again
+
+    public static void pushNotification(String msg){
+        //vibrator pattern
+        long[] patt = new long[3];
+        patt[0] = 200;
+        patt[1] = 100;
+        patt[2] = 200;
+
+        //push msg to the notification area.
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                .setSmallIcon(R.drawable.cute_ball_info)
+                .setContentTitle(msg)
+                .setContentText("Touch to open app")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setVibrate(patt);
+        Intent[] intents = new Intent[1];
+        intents[0] = new Intent(context, MainActivity.class);
+        PendingIntent PI = PendingIntent.getActivities(context, 0, intents, 0);
+        mBuilder.setContentIntent(PI);
+        mNotificationManager.notify(001, mBuilder.build());
+    }
 
     public static void startListening() {
         PNConfiguration pnConfiguration = new PNConfiguration();
@@ -85,21 +137,7 @@ public class WebRTC extends Thread {
                     String msg = message.getMessage().toString();
                     Log.d(TAG, msg);
 
-                    //vibrator pattern
-                    long[] patt = new long[3];
-                    patt[0] = 200;
-                    patt[1] = 100;
-                    patt[2] = 200;
 
-                    //push msg to the notification area.
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.cute_ball_info)
-                            .setContentTitle("title")
-                            .setContentText(msg)
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                            .setVibrate(patt);
-                    mNotificationManager.notify(001, mBuilder.build());
 
 
                     //setup the current date and time
@@ -121,10 +159,44 @@ public class WebRTC extends Thread {
                         dbHandler.saveNewNotification(userName, date, time, "baby cried");
                     }
 
+
+                    if (cryCounter < 3) {
+                        long cryInterval = calendar.getTimeInMillis() - lastCryTime;
+                        if (cryInterval < 60000) {
+                            cryCounter++;
+                            lastCryTime = calendar.getTimeInMillis();
+
+                            Log.d(TAG, "Cry time " + cryCounter + "  cried within " + cryInterval);
+
+                            if (cryCounter >= 3) {
+                                if (isSMSON || true) {
+                                    SMSHandler smsHandler = new SMSHandler();
+//                                    smsHandler.sendSMS(smsNum1, "Please watch the baby at next door \n Automated message from Watch My Baby");
+//                                    smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
+                                    Log.d(TAG, "SMS sent");
+                                    pushNotification("SMS's Sent");
+                                }
+                                cryCounter = 0;
+                            }
+                            else{
+                                pushNotification("Baby Cried " +cryCounter+ " times");
+                            }
+                        } else {
+                            cryCounter = 1;
+                        }
+                    }
+
 //                    MainActivity ac = new MainActivity();
 //                    ac.refreshNotificationView();
 
+                    //bv.setBoo(!bv.isBoo());
 
+                    //change main activity's view
+                    try {
+                        mainActivity.refreshNotificationView();
+                    } catch (Exception ex) {
+                        //
+                    }
                 }
 
                 @Override

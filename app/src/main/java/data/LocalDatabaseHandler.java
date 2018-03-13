@@ -112,10 +112,11 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         String compositeNoti;
         try {
-            Cursor cursor = db.rawQuery("select * from notifications where userName = '" + userName + "' order by date,time limit 10", null);
+            Cursor cursor = db.rawQuery("select * from notifications where userName = '" + userName + "' order by date,time desc limit 10", null);
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     compositeNoti = cursor.getString(1) + ", " + cursor.getString(2) + "  : " + cursor.getString(3);
+                    Log.d(TAG,compositeNoti);
                     noti.add(compositeNoti);
                     cursor.moveToNext();
                 }

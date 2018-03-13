@@ -152,7 +152,7 @@ public class FileHandler {
 //        fileName = file.getLastPathSegment();
 //        fileName = fileName.substring(0, fileName.length() - 4);
 
-        StorageReference abcfileRef = storageRef.child("songs/" + lullabyTitle);
+        StorageReference abcfileRef = storageRef.child(userName+"/songs/" + lullabyTitle);
         UploadTask uploadTask;
         uploadTask = abcfileRef.putFile(file);
 
@@ -191,7 +191,7 @@ public class FileHandler {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         // Create a storage reference from our app
         StorageReference storageRef = storage.getReference();
-        StorageReference abcfileRef = storageRef.child("songs/" + fileName);
+        StorageReference abcfileRef = storageRef.child(userName+"/songs/" + fileName);
         abcfileRef.delete();
         deleteFileDataOnDB(fileName, userName);
     }

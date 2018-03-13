@@ -49,6 +49,8 @@ public class ViewBabyActivity extends AppCompatActivity {
                         Log.d(TAG, request.getOrigin().toString());
                         request.grant(request.getResources());
                         Log.d(TAG, "CAM ACCESS GRANTED");
+                        myWebView.loadUrl("javascript:clearInfoDiv()");
+                        Log.d(TAG, "connecting.. text cleared.");
                     }
                 });
             }
@@ -62,7 +64,6 @@ public class ViewBabyActivity extends AppCompatActivity {
                 myWebView.loadUrl("javascript:initiateCall('"+uname+"', '"+callName+"');");
             }
         });
-
     }
 
     public void changeColor(View view) {

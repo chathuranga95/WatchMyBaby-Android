@@ -32,6 +32,8 @@ import static utill.WebRTC.userName;
  */
 public class NotificationService extends Service {
 
+    String TAG = "notificationInfo";
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -47,11 +49,13 @@ public class NotificationService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(getApplicationContext());
         String uname = dbHandler.getLoggedUser();
+        Log.d(TAG,"username received by notification listener :" + uname);
 
         //initialize webRTC and start listening to the user specified channel, if the user is not logged-out
         if(uname != null) {
             WebRTC.setParas(getApplicationContext(), mNotificationManager, uname);
             thread.run();
+
         }
         return START_STICKY;//super.onStartCommand(intent, flags, startId);
     }
