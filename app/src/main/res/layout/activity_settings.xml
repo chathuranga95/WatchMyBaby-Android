@@ -13,11 +13,11 @@
         tools:layout_editor_absoluteY="1dp">
 
         <ToggleButton
-            android:id="@+id/toggleButton2"
+            android:id="@+id/tglbtnNoti"
             android:layout_width="86dp"
             android:layout_height="wrap_content"
-            android:layout_alignEnd="@+id/toggleButton3"
-            android:layout_below="@+id/editText4"
+            android:layout_alignEnd="@+id/tglbtnSMS"
+            android:layout_below="@+id/txtNum2"
             android:layout_marginTop="18dp"
             android:text="ToggleButton"
             tools:layout_editor_absoluteX="231dp"
@@ -27,19 +27,19 @@
             android:id="@+id/textView13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBaseline="@+id/toggleButton3"
-            android:layout_alignBottom="@+id/toggleButton3"
+            android:layout_alignBaseline="@+id/tglbtnSMS"
+            android:layout_alignBottom="@+id/tglbtnSMS"
             android:layout_alignParentStart="true"
             android:layout_marginStart="27dp"
             android:text="Send Messages (SMS)" />
 
         <ToggleButton
-            android:id="@+id/toggleButton3"
+            android:id="@+id/tglbtnSMS"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginTop="16dp"
-            android:layout_toEndOf="@+id/editText3"
+            android:layout_toEndOf="@+id/txtNum1"
             android:text="ToggleButton" />
 
         <TextView
@@ -47,12 +47,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/textView13"
-            android:layout_below="@+id/toggleButton3"
+            android:layout_below="@+id/tglbtnSMS"
             android:layout_marginTop="27dp"
             android:text="Set Number 1" />
 
         <EditText
-            android:id="@+id/editText3"
+            android:id="@+id/txtNum1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/textView14"
@@ -65,13 +65,13 @@
             android:id="@+id/textView15"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/editText3"
-            android:layout_below="@+id/editText3"
+            android:layout_alignStart="@+id/txtNum1"
+            android:layout_below="@+id/txtNum1"
             android:layout_marginTop="14dp"
             android:text="Set Number 2" />
 
         <EditText
-            android:id="@+id/editText4"
+            android:id="@+id/txtNum2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/textView15"
@@ -84,10 +84,20 @@
             android:id="@+id/textView16"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/toggleButton2"
-            android:layout_alignStart="@+id/editText4"
+            android:layout_alignBottom="@+id/tglbtnNoti"
+            android:layout_alignStart="@+id/txtNum2"
             android:layout_marginBottom="12dp"
             android:text="Notifications" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/tglbtnNoti"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="50dp"
+            android:text="Save"
+            android:onClick="saveOnDB"/>
 
     </RelativeLayout>
 

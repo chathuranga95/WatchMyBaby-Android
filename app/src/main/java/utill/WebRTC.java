@@ -24,6 +24,7 @@ import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -45,8 +46,11 @@ public class WebRTC extends Thread {
     static int cryCounter;
     static long lastCryTime;
     static boolean isSMSON;
+    static boolean isNoti;
+    static boolean iscurrSMS = true;
     static String smsNum1;
     static String smsNum2;
+    static LocalDatabaseHandler dbHandler;
 
 
 //    public WebRTC(MainActivity act, NotificationManager nm, String uname){
@@ -60,6 +64,7 @@ public class WebRTC extends Thread {
     public void run() {
         startListening();
         Log.d(TAG, "started listening");
+        Log.d(TAG, "curr sms" + iscurrSMS);
     }
 
     public static void setParas(Context cnt, NotificationManager nm, String uname) {
@@ -68,22 +73,24 @@ public class WebRTC extends Thread {
         userName = uname;
         cryCounter = 0;
         lastCryTime = (Calendar.getInstance()).getTimeInMillis();
+
+        dbHandler = new LocalDatabaseHandler(context);
+        ArrayList<String> settings = dbHandler.retrieveSettings(userName);
+        isNoti = settings.get(3).equals("true");
+        isSMSON = settings.get(0).equals("true");
+        smsNum1 = settings.get(1);
+        smsNum2 = settings.get(2);
+
         Log.d(TAG, "paras inited");
-        isSMSON = false;
     }
 
     public static void setBooForWebRTC(BooVariable booVariable) {
         bv = booVariable;
     }
 
-    public static void setSMSSettings(boolean sms, String n1, String n2) {
-        isSMSON = sms;
-        smsNum1 = n1;
-        smsNum2 = n2;
-    }
 
-    public static void setSMSOnOff(boolean sms) {
-        isSMSON = sms;
+    public static void setCurrSMSOnOff(boolean sms) {
+        iscurrSMS = sms;
     }
 
     public static void setMainActivity(MainActivity ma) {
@@ -92,26 +99,28 @@ public class WebRTC extends Thread {
     //start listening to the channel specified to the given user,
     //feed the notification to the main activity again
 
-    public static void pushNotification(String msg){
-        //vibrator pattern
-        long[] patt = new long[3];
-        patt[0] = 200;
-        patt[1] = 100;
-        patt[2] = 200;
+    public static void pushNotification(String msg) {
+        if (isNoti) {
+            //vibrator pattern
+            long[] patt = new long[3];
+            patt[0] = 200;
+            patt[1] = 100;
+            patt[2] = 200;
 
-        //push msg to the notification area.
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
-                .setSmallIcon(R.drawable.cute_ball_info)
-                .setContentTitle(msg)
-                .setContentText("Touch to open app")
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setVibrate(patt);
-        Intent[] intents = new Intent[1];
-        intents[0] = new Intent(context, MainActivity.class);
-        PendingIntent PI = PendingIntent.getActivities(context, 0, intents, 0);
-        mBuilder.setContentIntent(PI);
-        mNotificationManager.notify(001, mBuilder.build());
+            //push msg to the notification area.
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+                    .setSmallIcon(R.drawable.cute_ball_info)
+                    .setContentTitle(msg)
+                    .setContentText("Touch to open app")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                    .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                    .setVibrate(patt);
+            Intent[] intents = new Intent[1];
+            intents[0] = new Intent(context, MainActivity.class);
+            PendingIntent PI = PendingIntent.getActivities(context, 0, intents, 0);
+            mBuilder.setContentIntent(PI);
+            mNotificationManager.notify(001, mBuilder.build());
+        }
     }
 
     public static void startListening() {
@@ -138,8 +147,6 @@ public class WebRTC extends Thread {
                     Log.d(TAG, msg);
 
 
-
-
                     //setup the current date and time
                     Calendar calendar = Calendar.getInstance();
 
@@ -155,7 +162,6 @@ public class WebRTC extends Thread {
 
                     synchronized (new Object()) {
                         //save notification on the local database
-                        LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(context);
                         dbHandler.saveNewNotification(userName, date, time, "baby cried");
                     }
 
@@ -169,17 +175,27 @@ public class WebRTC extends Thread {
                             Log.d(TAG, "Cry time " + cryCounter + "  cried within " + cryInterval);
 
                             if (cryCounter >= 3) {
-                                if (isSMSON || true) {
+                                if (isSMSON && iscurrSMS) {
                                     SMSHandler smsHandler = new SMSHandler();
-//                                    smsHandler.sendSMS(smsNum1, "Please watch the baby at next door \n Automated message from Watch My Baby");
-//                                    smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
-                                    Log.d(TAG, "SMS sent");
-                                    pushNotification("SMS's Sent");
+                                    int noOfSMS = 0;
+                                    if (!smsNum1.equals("")) {
+//                                        smsHandler.sendSMS(smsNum1, "Please watch the baby at next door \n Automated message from Watch My Baby");
+                                        Log.d(TAG, "SMS sent");
+                                        noOfSMS++;
+                                        pushNotification(noOfSMS + " SMS's Sent");
+                                    }
+                                    if (!smsNum2.equals("")) {
+//                                        smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
+                                        Log.d(TAG, "SMS sent");
+                                        noOfSMS++;
+                                        pushNotification(noOfSMS + " SMS's Sent");
+                                    }
+
+
                                 }
                                 cryCounter = 0;
-                            }
-                            else{
-                                pushNotification("Baby Cried " +cryCounter+ " times");
+                            } else {
+                                pushNotification("Baby Cried " + cryCounter + " times");
                             }
                         } else {
                             cryCounter = 1;

@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         WebRTC.setMainActivity(MainActivity.this);
-        WebRTC.setSMSOnOff(true);
+        WebRTC.setCurrSMSOnOff(false);
 
         //start notification listening service.
         startService(new Intent(this, NotificationService.class));

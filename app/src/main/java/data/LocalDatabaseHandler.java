@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.nfc.Tag;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -33,9 +34,11 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         try {
             String createTableLogin = "CREATE TABLE login (userName text primary key, logged text)";
             String createTableNotifications = "CREATE TABLE notifications (username text, date text, time text, msg text)";
+            String createTableSettings = "CREATE TABLE settings (username text primary key, smsOn text, num1 text, num2 text,notiOn text)";
             db.execSQL(createTableLogin);
             db.execSQL(createTableNotifications);
-            Log.d(TAG, "Table created");
+            db.execSQL(createTableSettings);
+            Log.d(TAG, "Tables created");
 
         } catch (SQLiteException ee) {
             Log.d(TAG, "Table exists already");
@@ -116,7 +119,7 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     compositeNoti = cursor.getString(1) + ", " + cursor.getString(2) + "  : " + cursor.getString(3);
-                    Log.d(TAG,compositeNoti);
+                    Log.d(TAG, compositeNoti);
                     noti.add(compositeNoti);
                     cursor.moveToNext();
                 }
@@ -125,6 +128,45 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
             Log.d(TAG, "sql exception occured" + ee.toString());
         }
         return noti;
+    }
+
+    public ArrayList<String> retrieveSettings(String userName) {
+        ArrayList<String> settings = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        try {
+            Cursor cursor = db.rawQuery("select * from settings where userName = '" + userName + "'", null);
+            if (cursor.moveToFirst()) {
+                while (!cursor.isAfterLast()) {
+                    for (int i = 1; i < 5; i++) {
+                        settings.add(cursor.getString(i));
+                        Log.d(TAG, "current setting : " + i + " " + cursor.getString(i));
+                    }
+                    cursor.moveToNext();
+                }
+            }
+        } catch (SQLiteException ee) {
+            Log.d(TAG, "sql exception occured" + ee.toString());
+        }
+        if(settings.isEmpty()){
+            settings.add(0,"false");
+            settings.add(1,"");
+            settings.add(2,"");
+            settings.add(3,"true");
+        }
+        return settings;
+    }
+
+    public boolean setSettingsOnDB(String userName, String smsOn, String num1, String num2, String notiOn) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            db.execSQL("delete from settings");
+            db.execSQL("insert into settings values('" + userName + "','" + smsOn + "','" + num1 + "','" + num2 + "','" + notiOn + "')");
+            Log.d(TAG, "saved settings.");
+        } catch (SQLiteException ex) {
+            Log.d(TAG, "error saving noti: " + ex.toString());
+            return false;
+        }
+        return true;
     }
 
     public void clearNotifications(String userName) {

@@ -49,13 +49,12 @@ public class NotificationService extends Service {
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         LocalDatabaseHandler dbHandler = new LocalDatabaseHandler(getApplicationContext());
         String uname = dbHandler.getLoggedUser();
-        Log.d(TAG,"username received by notification listener :" + uname);
+        Log.d(TAG, "username received by notification listener :" + uname);
 
         //initialize webRTC and start listening to the user specified channel, if the user is not logged-out
-        if(uname != null) {
+        if (uname != null) {
             WebRTC.setParas(getApplicationContext(), mNotificationManager, uname);
             thread.run();
-
         }
         return START_STICKY;//super.onStartCommand(intent, flags, startId);
     }

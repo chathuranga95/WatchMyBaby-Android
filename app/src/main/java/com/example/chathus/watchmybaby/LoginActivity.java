@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 import utill.ProductCipher;
 import utill.User;
 import data.LocalDatabaseHandler;
@@ -76,6 +78,14 @@ public class LoginActivity extends AppCompatActivity {
 
                     //Login success, save the username for future auto logins
                     dbHandler.saveLogin(userName);
+
+                    //check for settings
+                    ArrayList<String> settings = dbHandler.retrieveSettings(userName);
+
+                    if (settings.get(0).equals("false")) {
+                        //show toast to set the sms settings
+                        Toast.makeText(getApplicationContext(), "SMS alerts turned OFF. Goto Settings to turn ON", Toast.LENGTH_LONG).show();
+                    }
 
                     //show main page.
                     Intent myIntent = new Intent(LoginActivity.this, MainActivity.class);
