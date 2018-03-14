@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        setTitle("Login");
+        setTitle("Watch My Baby - Login");
         findViewById(R.id.txtUserName).requestFocus();
 
         dbHandler = new LocalDatabaseHandler(this); //new database handler object

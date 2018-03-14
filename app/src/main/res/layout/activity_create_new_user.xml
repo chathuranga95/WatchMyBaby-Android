@@ -29,7 +29,8 @@
                 android:layout_alignBottom="@+id/txtName"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="9dp"
-                android:text="Name" />
+                android:text="Name"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtName"
@@ -49,7 +50,8 @@
                 android:layout_alignBaseline="@+id/txtEmail"
                 android:layout_alignBottom="@+id/txtEmail"
                 android:layout_alignStart="@+id/textView"
-                android:text="Email" />
+                android:text="Email"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtEmail"
@@ -68,7 +70,8 @@
                 android:layout_alignBaseline="@+id/txtPhone"
                 android:layout_alignBottom="@+id/txtPhone"
                 android:layout_alignStart="@+id/textView2"
-                android:text="Mobile" />
+                android:text="Mobile"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtPhone"
@@ -97,7 +100,8 @@
                 android:layout_alignBaseline="@+id/txtUserName"
                 android:layout_alignBottom="@+id/txtUserName"
                 android:layout_alignStart="@+id/textView3"
-                android:text="User Name" />
+                android:text="User Name"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtPass"
@@ -115,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/txtPass"
                 android:layout_below="@+id/txtPass"
-                android:layout_marginTop="34dp"
+                android:layout_marginTop="24dp"
                 android:ems="10"
                 android:inputType="numberPassword" />
 
@@ -126,15 +130,17 @@
                 android:layout_alignBaseline="@+id/txtPass"
                 android:layout_alignBottom="@+id/txtPass"
                 android:layout_alignStart="@+id/textView4"
-                android:text="Password" />
+                android:text="Password"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/textView6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@+id/textView5"
-                android:layout_alignTop="@+id/txtConfirmPass"
-                android:text="Confirm Password" />
+                android:layout_above="@+id/btnOK"
+                android:layout_alignStart="@+id/textView5"
+                android:text="Confirm \nPassword"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnOK"
@@ -143,9 +149,10 @@
                 android:layout_alignEnd="@+id/txtConfirmPass"
                 android:layout_below="@+id/txtConfirmPass"
                 android:layout_marginTop="22dp"
+                android:background="@android:color/holo_green_dark"
                 android:onClick="create"
                 android:text="Create"
-                />
+                android:textColor="#ffffff"/>
 
         </RelativeLayout>
 
