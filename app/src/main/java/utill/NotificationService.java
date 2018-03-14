@@ -1,31 +1,14 @@
 package utill;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
-import android.os.Message;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.example.chathus.watchmybaby.MainActivity;
-import com.example.chathus.watchmybaby.R;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import data.LocalDatabaseHandler;
-
-import static utill.WebRTC.userName;
 
 /**
  * Created by chathuranga on 2/21/2018.

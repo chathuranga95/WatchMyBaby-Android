@@ -1,10 +1,6 @@
 package utill;
 
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.telephony.SmsManager;
-
-import com.example.chathus.watchmybaby.MainActivity;
 
 /**
  * Created by chathuranga on 2/15/2018.

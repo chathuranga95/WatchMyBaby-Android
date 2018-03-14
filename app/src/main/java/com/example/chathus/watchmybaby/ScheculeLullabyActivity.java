@@ -43,7 +43,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
     TimePickerDialog timepickerdialog;
 
     Button btnSetTime;
-    ImageButton btnFileDelete;
+    Button btnFileDelete;
     ListView listView;
     TextView lblProgress;
     User user;
@@ -59,7 +59,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         setTitle("Schedule Lullabies");
 
         btnSetTime = (Button) findViewById(R.id.btnSetTime);
-        btnFileDelete = (ImageButton) findViewById(R.id.btnDel);
+        btnFileDelete = findViewById(R.id.btnDel);
         listView = (ListView) findViewById(R.id.lstFiles);
         lblProgress = findViewById(R.id.lblProgress);
         userName = getIntent().getStringExtra("userName");

@@ -1,18 +1,11 @@
 package utill;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.chathus.watchmybaby.LoginActivity;
-import com.example.chathus.watchmybaby.MainActivity;
-import com.example.chathus.watchmybaby.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;

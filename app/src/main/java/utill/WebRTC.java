@@ -1,18 +1,13 @@
 package utill;
 
 
-import android.app.Application;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.os.SystemClock;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.ListView;
 
 import com.example.chathus.watchmybaby.MainActivity;
 import com.example.chathus.watchmybaby.R;
@@ -27,7 +22,6 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import data.LocalDatabaseHandler;
 
@@ -52,7 +46,7 @@ public class WebRTC extends Thread {
     static LocalDatabaseHandler dbHandler;
 
 
-//    public WebRTC(MainActivity act, NotificationManager nm, String uname){
+//    public WebRTC(MainActivityOld act, NotificationManager nm, String uname){
 //        activity = act;
 //        mNotificationManager = nm;
 //        userName = uname;
@@ -198,7 +192,7 @@ public class WebRTC extends Thread {
                         }
                     }
 
-//                    MainActivity ac = new MainActivity();
+//                    MainActivityOld ac = new MainActivityOld();
 //                    ac.refreshNotificationView();
 
                     //bv.setBoo(!bv.isBoo());

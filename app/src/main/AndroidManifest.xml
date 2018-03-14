@@ -13,24 +13,24 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/baby_icon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <!--android:theme="@style/AppTheme">-->
 
-        <!--Login Activity-->
+        <!-- android:theme="@style/AppTheme"> -->
+
+
+        <!-- Login Activity -->
         <activity
             android:name=".LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -43,34 +43,36 @@
             </intent-filter>
         </activity>
 
-        <!--Create New user activity-->
+        <!-- Create New user activity -->
         <activity
             android:name=".CreateNewUserActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Create User Account"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
 
-        <!--Main Activity-->
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="Watch My Baby"
-            android:screenOrientation="portrait"></activity>
+        <!-- Main Activity -->
 
-        <!--Video Call activity-->
+        <!-- Video Call activity -->
         <activity
             android:name=".ViewBabyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name=".ScheculeLullabyActivity" />
-        <activity android:name=".SettingsActivity"></activity>
+        <activity android:name=".SettingsActivity" />
 
-        <!--Cry alert listening background service-->
+        <!-- Cry alert listening background service -->
         <service
             android:name="utill.NotificationService"
             android:enabled="true"
             android:exported="true" />
+
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Watch My Baby"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

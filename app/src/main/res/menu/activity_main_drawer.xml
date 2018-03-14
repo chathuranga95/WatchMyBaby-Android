@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/view_baby"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="View Baby" />
+        <item
+            android:id="@+id/schedule_lullaby"
+            android:icon="@drawable/ic_menu_slideshow"
+            android:title="Schedule Lullabies" />
+        <item
+            android:id="@+id/clear_notification"
+            android:icon="@drawable/cleaning_icon"
+            android:title="Clear Notifications" />
+        <item
+            android:id="@+id/settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Settings" />
+    </group>
+
+    <item android:title="App">
+        <menu>
+            <item
+                android:id="@+id/nav_share"
+                android:icon="@drawable/ic_menu_share"
+                android:title="Share" />
+            <item
+                android:id="@+id/about"
+                android:icon="@drawable/info_icon"
+                android:title="About" />
+        </menu>
+    </item>
+
+</menu>
