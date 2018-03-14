@@ -41,7 +41,6 @@ public class WebRTC extends Thread {
     static String userName;
     final static String TAG = "msgcheck";
     static Context context;
-    static BooVariable bv;
     static MainActivity mainActivity;
     static int cryCounter;
     static long lastCryTime;
@@ -84,10 +83,6 @@ public class WebRTC extends Thread {
         Log.d(TAG, "paras inited");
     }
 
-    public static void setBooForWebRTC(BooVariable booVariable) {
-        bv = booVariable;
-    }
-
 
     public static void setCurrSMSOnOff(boolean sms) {
         iscurrSMS = sms;
@@ -114,7 +109,8 @@ public class WebRTC extends Thread {
                     .setContentText("Touch to open app")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                    .setVibrate(patt);
+                    .setVibrate(patt)
+                    .setAutoCancel(true);
             Intent[] intents = new Intent[1];
             intents[0] = new Intent(context, MainActivity.class);
             PendingIntent PI = PendingIntent.getActivities(context, 0, intents, 0);

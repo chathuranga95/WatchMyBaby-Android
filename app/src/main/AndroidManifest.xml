@@ -17,7 +17,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-
+    <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
 
@@ -26,36 +27,50 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-    <!--android:theme="@style/AppTheme">-->
-    <activity
-        android:name=".LoginActivity"
-        android:label="Watch My Baby">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+        android:theme="@style/AppTheme">
+        <!--android:theme="@style/AppTheme">-->
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-    <activity
-        android:name=".CreateNewUserActivity"
-        android:label="Create User Account"></activity>
-    <activity
-        android:name=".MainActivity"
-        android:label="Watch My Baby">
+        <!--Login Activity-->
+        <activity
+            android:name=".LoginActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Watch My Baby"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-    </activity>
-    <activity android:name=".ViewBabyActivity"></activity>
-    <activity android:name=".ScheculeLullabyActivity" />
-    <activity android:name=".SettingsActivity"></activity>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
+        <!--Create New user activity-->
+        <activity
+            android:name=".CreateNewUserActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Create User Account"
+            android:screenOrientation="portrait"></activity>
+
+        <!--Main Activity-->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Watch My Baby"
+            android:screenOrientation="portrait"></activity>
+
+        <!--Video Call activity-->
+        <activity
+            android:name=".ViewBabyActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+        <activity android:name=".ScheculeLullabyActivity" />
+        <activity android:name=".SettingsActivity"></activity>
+
+        <!--Cry alert listening background service-->
         <service
             android:name="utill.NotificationService"
             android:enabled="true"
-            android:exported="true"/>
-</application>
-    <uses-permission android:name="android.permission.SEND_SMS">
-    </uses-permission>
-    <uses-permission android:name="android.permission.VIBRATE"/>
+            android:exported="true" />
+    </application>
 
-    </manifest>
+</manifest>

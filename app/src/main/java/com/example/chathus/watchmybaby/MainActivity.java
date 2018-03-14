@@ -10,13 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 
 import data.LocalDatabaseHandler;
-import utill.BooVariable;
 import utill.NotificationService;
-import utill.SMSHandler;
 import utill.WebRTC;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     LocalDatabaseHandler dbHandler;
     ListView listView;
     NotificationManager mNotificationManager;
-    BooVariable bv;
+
     final String TAG = "MainActivityInfo";
 
     @Override
