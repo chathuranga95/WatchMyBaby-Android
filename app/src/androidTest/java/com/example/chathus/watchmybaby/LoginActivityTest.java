@@ -32,9 +32,6 @@ public class LoginActivityTest {
     private String userName = "test";
     private String password = "12345";
 
-
-
-
     @Rule
     public ActivityTestRule<LoginActivity> activityTestRule =
             new ActivityTestRule<>(LoginActivity.class);

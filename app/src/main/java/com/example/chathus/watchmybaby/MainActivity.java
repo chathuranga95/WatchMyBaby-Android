@@ -1,11 +1,16 @@
 package com.example.chathus.watchmybaby;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import data.LocalDatabaseHandler;
+import utill.FileHandler;
 import utill.NotificationService;
 import utill.WebRTC;
 
@@ -102,15 +108,13 @@ public class MainActivity extends AppCompatActivity
 //        });
     }
 
-
     //fill up listview with last 10 notifications.
     public void refreshNotificationView() {
         listView = (ListView) findViewById(R.id.lstNotifications);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(dbHandler.getLoggedUser()));
+                android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(userName));
         listView.setAdapter(adapter);
-        Log.d(TAG, "username " + userName);
-        Log.d(TAG, "notification view refresh called.");
+        Log.d(TAG, "notification view refresh called. username " + userName);
     }
 
 
@@ -167,9 +171,40 @@ public class MainActivity extends AppCompatActivity
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(myIntent);
         } else if (id == R.id.nav_share) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, "Find the Watch My Baby Web Application and Android Application Here\nhttps://watchmybaby-52d18.firebaseapp.com");
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
 
         } else if (id == R.id.about) {
-
+            //show about dialog box
+            new AlertDialog.Builder(this)
+                    .setTitle("About")
+                    .setMessage("Watch My Baby - Version 1.0 (2018)" +
+                            "\n\nThis app is used to monitor children coupled with the web application you can find by the URL," +
+                            "\n" +
+                            Html.fromHtml("<a href=\"https://watchmybaby-52d18.firebaseapp.com\">https://watchmybaby-52d18.firebaseapp.com</a>") +
+                            "\n\nFeatures" +
+                            "\n\t"+
+                            Html.fromHtml("<b>&bull</b>")+
+                            " Watch the baby live - View Baby" +
+                            "\n\t"+
+                            Html.fromHtml("<b>&bull</b>")+
+                            " Automatically detect baby cry and alerting" +
+                            "\n\t"+
+                            Html.fromHtml("<b>&bull</b>")+
+                            " Receive notifications even when the app is closed\n\tUpload and schedule lullabies to be played for the baby" +
+                            "\n\t"+
+                            Html.fromHtml("<b>&bull</b>")+
+                            " Automatically send messages to the neighbours when you are busy" +
+                            "\n\nThe app was developed by Chathuranga Siriwardhana for the 3rd year SEP at University of Moratuwa.")
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            //close and do nothing
+                        }
+                    })
+                    .show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

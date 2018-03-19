@@ -125,14 +125,19 @@ public class LoginActivity extends AppCompatActivity {
     public boolean compare(User user) {
         //compare encrypted password with database data
         String psw = ((EditText) findViewById(R.id.txtPass)).getText().toString().trim();
-        ProductCipher ps = new ProductCipher();
-        String encPsw = ps.Encrypt("watch my baby username " + userName, psw);
-        if (user == null) {
+        if(psw.isEmpty()){
             return false;
-        } else if (user.getPassword().equals(encPsw)) {
-            return true;
-        } else {
-            return false;
+        }
+        else {
+            ProductCipher ps = new ProductCipher();
+            String encPsw = ps.Encrypt("watch my baby username " + userName, psw);
+            if (user == null) {
+                return false;
+            } else if (user.getPassword().equals(encPsw)) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 

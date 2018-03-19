@@ -20,7 +20,7 @@ import org.junit.runners.MethodSorters;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class CreateNewActivityTest {
+public class CreateNewUserActivityTest {
 
     private Solo solo;
     private String userName = "newTestUser";

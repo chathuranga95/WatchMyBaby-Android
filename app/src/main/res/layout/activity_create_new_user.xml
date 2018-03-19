@@ -81,7 +81,7 @@
                 android:layout_below="@+id/txtEmail"
                 android:layout_marginTop="10dp"
                 android:ems="10"
-                android:inputType="phone" />
+                android:inputType="number" />
 
             <EditText
                 android:id="@+id/txtUserName"

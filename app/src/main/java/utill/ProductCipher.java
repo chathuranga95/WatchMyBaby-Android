@@ -119,12 +119,16 @@ public class ProductCipher {
 
     public String Encrypt(String text, String key) {
 
-        String shifted = shift(text, key);
-        System.out.println("Shifted only \n" + shifted);
+        if (text != "" && key != "") {
+            String shifted = shift(text, key);
+            System.out.println("Shifted only \n" + shifted);
 
-        String permuted = permute(shifted, key);
-        System.out.println("Shifted and permuted \n" + permuted);
+            String permuted = permute(shifted, key);
+            System.out.println("Shifted and permuted \n" + permuted);
 
-        return permuted;
+            return permuted;
+        } else {
+            return "";
+        }
     }
 }

@@ -44,11 +44,11 @@ public class CreateNewUserActivity extends AppCompatActivity {
 
         //collect data to create the user object
         final String userName = txtUserName.getText().toString().trim();
-        final String name = txtName.getText().toString();
+        final String name = txtName.getText().toString().trim();
         final String password = txtPass.getText().toString().trim();
         final String retypedPassword = txtConfirmPass.getText().toString().trim();
-        final String email = txtEmail.getText().toString();
-        final int tel = Integer.parseInt(txtPhone.getText().toString());
+        final String email = txtEmail.getText().toString().trim();
+        final String telStr = txtPhone.getText().toString().trim();
 
         //encrypt some text using password.
         ProductCipher ps = new ProductCipher();
@@ -60,64 +60,69 @@ public class CreateNewUserActivity extends AppCompatActivity {
         // get database instance and slot to check whether the user already exists
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(userName);
+        if (userName.isEmpty()|| name.isEmpty() || password.isEmpty() || retypedPassword.isEmpty()|| email.isEmpty() || telStr.isEmpty()) {
+            //show toast to fill all the fields
+            showToast("Please fill all the details.");
+        } else {
 
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // Create User Object out of database data
-                User user = (User) dataSnapshot.getValue(User.class);
+            myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Create User Object out of database data
+                    User user = (User) dataSnapshot.getValue(User.class);
 
-                if (user == null) { //user name available to use
-                    if (validation.isEmailVaid(email)) {
-                        if (validation.isTelValid(tel)) {
-                            if (validation.isPswMatch(password, retypedPassword)) {
-                                //create a new User object
-                                user = new User(name, userName, encPsw, email, tel);
+                    if (user == null) { //user name available to use
+                        if (validation.isEmailVaid(email)) {
+                            if (validation.isTelValid(Integer.parseInt(telStr))) {
+                                if (validation.isPswMatch(password, retypedPassword)) {
+                                    //create a new User object
+                                    user = new User(name, userName, encPsw, email, Integer.parseInt(telStr));
 
-                                // get database instance and slot
-                                FirebaseDatabase database = FirebaseDatabase.getInstance();
-                                DatabaseReference myRef = database.getReference(userName);
+                                    // get database instance and slot
+                                    FirebaseDatabase database = FirebaseDatabase.getInstance();
+                                    DatabaseReference myRef = database.getReference(userName);
 
-                                //write User object to the database
-                                myRef.setValue(user);
+                                    //write User object to the database
+                                    myRef.setValue(user);
 
-                                //show toast of succcess
-                                showToast("New user Created successfully");
+                                    //show toast of succcess
+                                    showToast("New user Created successfully");
 
-                                //clear components
-                                clearComponents();
+                                    //clear components
+                                    clearComponents();
 
-                                //guide user back
-                                Intent intent = new Intent(CreateNewUserActivity.this, LoginActivity.class);
-                                startActivity(intent);
+                                    //guide user back
+                                    Intent intent = new Intent(CreateNewUserActivity.this, LoginActivity.class);
+                                    startActivity(intent);
 
+                                } else {
+                                    showToast("Password confirmation doesn't match.");
+                                    txtConfirmPass.setText("");
+                                    txtConfirmPass.requestFocus();
+                                }
                             } else {
-                                showToast("Password confirmation doesn't match.");
-                                txtConfirmPass.setText("");
-                                txtConfirmPass.requestFocus();
+                                showToast("Please enter a valid Tel Number.");
+                                txtPhone.setText("");
+                                txtPhone.requestFocus();
                             }
                         } else {
-                            showToast("Please enter a valid Tel Number.");
-                            txtPhone.setText("");
-                            txtPhone.requestFocus();
+                            showToast("Please enter a valid email.");
+                            txtEmail.setText("");
+                            txtEmail.requestFocus();
                         }
                     } else {
-                        showToast("Please enter a valid email.");
-                        txtEmail.setText("");
-                        txtEmail.requestFocus();
+                        showToast("The username is taken. Try another one.");
+                        txtUserName.setText("");
+                        txtUserName.requestFocus();
                     }
-                } else {
-                    showToast("The username is taken. Try another one.");
-                    txtUserName.setText("");
-                    txtUserName.requestFocus();
                 }
-            }
 
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value, log details.
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError error) {
+                    // Failed to read value, log details.
+                }
+            });
+        }
     }
 
     private void showToast(String msg) {

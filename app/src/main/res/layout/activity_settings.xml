@@ -67,7 +67,7 @@
             android:layout_below="@+id/textView14"
             android:layout_marginTop="16dp"
             android:ems="10"
-            android:inputType="phone" />
+            android:inputType="number" />
 
         <TextView
             android:id="@+id/textView15"
@@ -87,7 +87,7 @@
             android:layout_below="@+id/textView15"
             android:layout_marginTop="16dp"
             android:ems="10"
-            android:inputType="phone" />
+            android:inputType="number" />
 
         <TextView
             android:id="@+id/textView16"

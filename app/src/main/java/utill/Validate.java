@@ -23,18 +23,17 @@ import static utill.WebRTC.userName;
 
 public class Validate {
 
-
-    public boolean validateUser(User user, String reTypePsw) {
-        return isEmailVaid(user.getEmail()) && isPswMatch(user.getPassword(), reTypePsw) && isTelValid(user.getTel());
-    }
-
     public boolean isTelValid(int tel) {
         String teltxt = String.valueOf(tel);
         return (teltxt.length() == 9);
     }
 
     public boolean isPswMatch(String psw, String reTypePsw) {
-        return (psw.equals(reTypePsw));
+        //return false if one of inputs are empty
+        if (psw.isEmpty() || reTypePsw.isEmpty())
+            return false;
+        else
+            return (psw.equals(reTypePsw));
     }
 
     public boolean isEmailVaid(String email) {

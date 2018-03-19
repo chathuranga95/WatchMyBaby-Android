@@ -15,11 +15,13 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 
 
 public class ViewBabyActivity extends Activity {
     WebView myWebView;
     String userName = "";
+    ImageButton btnHangup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,14 +40,36 @@ public class ViewBabyActivity extends Activity {
         //Get a reference to the WebView
         myWebView = (WebView) findViewById(R.id.webview);
 
+        ////Get a reference to the hangup button
+        btnHangup = findViewById(R.id.btnHangup);
+
+        //set onclick listerner
+        btnHangup.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                hangupGoBack(v);
+            }
+        });
+
         //Obtain the WebSettings object
         WebSettings webSettings = myWebView.getSettings();
 
         //javascript enable
         webSettings.setJavaScriptEnabled(true);
 
+        final String uname = "watchMyBabyMobile" + userName;
+        final String callName = "watchMyBabyWeb" + userName;
+
+        myWebView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                myWebView.loadUrl("javascript:initiateCall('" + uname + "', '" + callName + "');");
+            }
+
+            public void onReceivedError(WebView localWebView, int errorCode, String description, String failingUrl) {
+                localWebView.loadUrl("file:///android_asset/error.html");
+            }
+        });
+
         // Grant permissions for cam
-        myWebView.setWebViewClient(new WebViewClient());
         myWebView.setWebChromeClient(new WebChromeClient() {
             final String TAG = "camaccess";
 
@@ -65,15 +89,10 @@ public class ViewBabyActivity extends Activity {
                 });
             }
         });
+        myWebView.loadUrl("about:blank");
         myWebView.loadUrl("https://watchmybaby-52d18.firebaseapp.com/videoCallView.html");
-        final String uname = "watchMyBabyMobile" + userName;
-        final String callName = "watchMyBabyWeb" + userName;
 
-        myWebView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                myWebView.loadUrl("javascript:initiateCall('" + uname + "', '" + callName + "');");
-            }
-        });
+        myWebView.setKeepScreenOn(true);
     }
 
     public void changeColor(View view) {
@@ -83,16 +102,15 @@ public class ViewBabyActivity extends Activity {
         Log.d("changeColor", "Color change request");
     }
 
-    public void hangup(View view) {
+    public void hangupGoBack(View view) {
         try {
-            myWebView.loadUrl("javascript:hangUpCall()");
-        }
-        catch (Exception ex){
+            myWebView.loadUrl("file:///android_asset/disconnect.html");
+            Log.d("videoCallHangup", "Call disconnected...");
+            //show main page.
+            Intent myIntent = new Intent(ViewBabyActivity.this, MainActivity.class);
+            startActivity(myIntent);
+        } catch (Exception ex) {
 
         }
-        Log.d("videoCallHangup", "Call disconnected...");
-        //show main page.
-        Intent myIntent = new Intent(ViewBabyActivity.this, MainActivity.class);
-        startActivity(myIntent);
     }
 }
