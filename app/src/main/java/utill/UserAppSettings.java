@@ -12,7 +12,7 @@ public class UserAppSettings {
     private int tel2;
     private boolean notification;
     private boolean SMS;
-    HashMap<String, Integer> fileList = new HashMap();
+    private HashMap<String, Integer> fileList = new HashMap();
 
 
     public UserAppSettings() {
