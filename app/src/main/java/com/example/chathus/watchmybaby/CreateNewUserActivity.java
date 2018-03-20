@@ -50,17 +50,13 @@ public class CreateNewUserActivity extends AppCompatActivity {
         final String email = txtEmail.getText().toString().trim();
         final String telStr = txtPhone.getText().toString().trim();
 
-        //encrypt some text using password.
-        ProductCipher ps = new ProductCipher();
-        final String encPsw = ps.Encrypt("watch my baby username " + userName, password);
-
         //validate user details
         validation = new Validate();
 
         // get database instance and slot to check whether the user already exists
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(userName);
-        if (userName.isEmpty()|| name.isEmpty() || password.isEmpty() || retypedPassword.isEmpty()|| email.isEmpty() || telStr.isEmpty()) {
+        if (userName.isEmpty() || name.isEmpty() || password.isEmpty() || retypedPassword.isEmpty() || email.isEmpty() || telStr.isEmpty()) {
             //show toast to fill all the fields
             showToast("Please fill all the details.");
         } else {
@@ -75,6 +71,11 @@ public class CreateNewUserActivity extends AppCompatActivity {
                         if (validation.isEmailVaid(email)) {
                             if (validation.isTelValid(Integer.parseInt(telStr))) {
                                 if (validation.isPswMatch(password, retypedPassword)) {
+
+                                    //encrypt some text using password.
+                                    ProductCipher ps = new ProductCipher();
+                                    final String encPsw = ps.Encrypt("watch my baby username " + userName, password);
+
                                     //create a new User object
                                     user = new User(name, userName, encPsw, email, Integer.parseInt(telStr));
 

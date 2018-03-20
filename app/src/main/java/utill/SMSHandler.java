@@ -7,9 +7,10 @@ import android.telephony.SmsManager;
  */
 
 public class SMSHandler {
-    public void sendSMS(String phoneNumber, String message)
-    {
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, null, null);
+    public void sendSMS(String phoneNumber, String message) {
+        if (!phoneNumber.isEmpty()) {
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(phoneNumber, null, message, null, null);
+        }
     }
 }

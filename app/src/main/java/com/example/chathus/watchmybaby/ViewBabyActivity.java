@@ -89,10 +89,13 @@ public class ViewBabyActivity extends Activity {
                 });
             }
         });
+//        myWebView.clearCache(true);
         myWebView.loadUrl("about:blank");
         myWebView.loadUrl("https://watchmybaby-52d18.firebaseapp.com/videoCallView.html");
 
-        myWebView.setKeepScreenOn(true);
+//        myWebView.setKeepScreenOn(true);
+//        myWebView.setHorizontalScrollBarEnabled(false);
+//        myWebView.setVerticalScrollBarEnabled(false);
     }
 
     public void changeColor(View view) {
@@ -104,13 +107,22 @@ public class ViewBabyActivity extends Activity {
 
     public void hangupGoBack(View view) {
         try {
+//            myWebView.loadUrl("javascript:disconnectCall()");
             myWebView.loadUrl("file:///android_asset/disconnect.html");
             Log.d("videoCallHangup", "Call disconnected...");
+        } catch (Exception ex) {
+            Log.d("videoCallHangup", "error 1");
+            Log.d("videoCallHangup", ex.toString());
+        }
+        try{
             //show main page.
             Intent myIntent = new Intent(ViewBabyActivity.this, MainActivity.class);
             startActivity(myIntent);
-        } catch (Exception ex) {
 
+        }
+        catch (Exception ee){
+            Log.d("videoCallHangup", "error 2");
+            Log.d("videoCallHangup", ee.toString());
         }
     }
 }
