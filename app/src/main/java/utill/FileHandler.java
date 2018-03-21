@@ -1,11 +1,13 @@
 package utill;
 
-import android.content.Context;
+import android.app.Activity;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.chathus.watchmybaby.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,14 +27,14 @@ import java.util.Map;
  */
 
 public class FileHandler {
-    Context context;
+    Activity activity;
     String userName;
     Map<String, String> fileDetails = null;
     String fileName;
     private User user;
 
-    public FileHandler(Context context, String userName) {
-        this.context = context;
+    public FileHandler(Activity activity, String userName) {
+        this.activity = activity;
         this.userName = userName;
     }
 
@@ -74,7 +76,7 @@ public class FileHandler {
                 // show a toast to user
                 CharSequence text = "Error, Please Try again!";
                 int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                Toast toast = Toast.makeText(activity, text, duration);
                 toast.show();
             }
         });
@@ -117,7 +119,7 @@ public class FileHandler {
                 // show a toast to user
                 CharSequence text = "Error, Please Try again!";
                 int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                Toast toast = Toast.makeText(activity, text, duration);
                 toast.show();
             }
         });
@@ -154,7 +156,7 @@ public class FileHandler {
             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                 int progress = (int)((100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
                 Log.d("File-upload", "Upload is " + progress + "% done");
-                //((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload is " + progress  + "% done");
+                ((TextView) activity.findViewById(R.id.lblProgress)).setText("Upload is " + progress  + "% done");
             }
         });
 
@@ -171,9 +173,9 @@ public class FileHandler {
                 // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                 //Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 Log.d("File-upload", "Upload completed");
-                //((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("Upload Completed");
+                ((TextView) activity.findViewById(R.id.lblProgress)).setText("Upload Completed");
   //              SystemClock.sleep(500);
-//                ((TextView) ((Activity) context).findViewById(R.id.lblProgress)).setText("");
+//                ((TextView) ((Activity) activity).findViewById(R.id.lblProgress)).setText("");
                 setFileDataOnDB(lullabyTitle, userName);
             }
         });

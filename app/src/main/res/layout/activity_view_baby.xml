@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:screenOrientation="landscape"
     android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-    tools:context="com.example.chathus.watchmybaby.ViewBabyActivity">
+    tools:activity="com.example.chathus.watchmybaby.ViewBabyActivity">
 
 
     <WebView

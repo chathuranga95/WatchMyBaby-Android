@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
 
         dbHandler = new LocalDatabaseHandler(this); //new database handler object
 
-        context = getApplicationContext(); //set context
+        context = getApplicationContext(); //set activity
 
         userName = dbHandler.getLoggedUser(); //check if there is a logged user.
         if (userName != null) { //if so, auto log in.

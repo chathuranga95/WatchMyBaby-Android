@@ -1,8 +1,8 @@
 package com.example.chathus.watchmybaby;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -11,10 +11,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -28,7 +26,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 
 import utill.CustomListAdapter;
@@ -50,7 +47,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
     Map<String, Integer> fileDetalis;
     int selectedIndex;
     String userName;
-    Context context;
+    Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +60,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.lstFiles);
         lblProgress = findViewById(R.id.lblProgress);
         userName = getIntent().getStringExtra("userName");
-        context = getApplicationContext();
+        activity = this;//.getApplicationContext();//getApplicationContext();
 
         //disable set time button, delete file button at loading
         btnSetTime.setEnabled(false);
@@ -83,7 +80,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                                     int position, long id) {
                 btnSetTime.setEnabled(true);
                 btnFileDelete.setEnabled(true);
-                Toast.makeText(ScheculeLullabyActivity.this, values.get(position), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(ScheculeLullabyActivity.this, values.get(position), Toast.LENGTH_SHORT).show();
                 selectedIndex = position;
             }
         });
@@ -110,7 +107,20 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                     values.clear();
                     fileNameList.clear();
                     for (String key : fileDetalis.keySet()) {
-                        values.add(key + "   :" + fileDetalis.get(key));
+                        int h = fileDetalis.get(key) / 100;
+                        int m = fileDetalis.get(key) % 100;
+                        String time = "";
+                        if (h == 0) {
+                            time = "00";
+                        } else {
+                            time = "" + h;
+                        }
+                        if (m < 10) {
+                            time += ".0" + m;
+                        } else {
+                            time += "." + m;
+                        }
+                        values.add(key + "   :   " + time);
                         fileNameList.add(key);
                         Log.d(TAG, key + "   :" + fileDetalis.get(key));
                     }
@@ -148,8 +158,6 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
 
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select File"), 302);
-
-
     }
 
     String lullabyTitle;
@@ -174,7 +182,7 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 lullabyTitle = txtTitle.getText().toString();
                                 if (!lullabyTitle.equals("")) {
-                                    FileHandler fileHandler = new FileHandler(context, userName);
+                                    FileHandler fileHandler = new FileHandler(activity, userName);
                                     fileHandler.upload(file, lullabyTitle);
                                 } else {
                                     Log.d("File-upload", "file name given empty");
