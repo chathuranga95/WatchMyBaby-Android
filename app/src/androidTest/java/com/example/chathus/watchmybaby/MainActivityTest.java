@@ -189,6 +189,7 @@ public class MainActivityTest {
         //verify Logout
         solo.waitForActivity(LoginActivity.class);
     }
+
     @After
     public void tearDown() throws Exception {
         //tearDown() is run after a test case has finished.

@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.text.Html;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     LocalDatabaseHandler dbHandler;
     ListView listView;
     NotificationManager mNotificationManager;
+    boolean doubleBackToExitPressedOnce;
 
     final String TAG = "MainActivityInfo";
 
@@ -47,6 +49,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        doubleBackToExitPressedOnce = false;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -125,8 +129,23 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (doubleBackToExitPressedOnce) {
+                moveTaskToBack(true);
+            }
+
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Press Back again to exit", Toast.LENGTH_SHORT).show();
+
+            //give the user 2s to press back and exit
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
         }
+
+
     }
 
     @Override
@@ -188,17 +207,17 @@ public class MainActivity extends AppCompatActivity
                             "\n" +
                             Html.fromHtml("<a href=\"https://watchmybaby-52d18.firebaseapp.com\">https://watchmybaby-52d18.firebaseapp.com</a>") +
                             "\n\nFeatures" +
-                            "\n\t"+
-                            Html.fromHtml("<b>&bull</b>")+
+                            "\n\t" +
+                            Html.fromHtml("<b>&bull</b>") +
                             " Watch the baby live - View Baby" +
-                            "\n\t"+
-                            Html.fromHtml("<b>&bull</b>")+
+                            "\n\t" +
+                            Html.fromHtml("<b>&bull</b>") +
                             " Automatically detect baby cry and alerting" +
-                            "\n\t"+
-                            Html.fromHtml("<b>&bull</b>")+
+                            "\n\t" +
+                            Html.fromHtml("<b>&bull</b>") +
                             " Receive notifications even when the app is closed\n\tUpload and schedule lullabies to be played for the baby" +
-                            "\n\t"+
-                            Html.fromHtml("<b>&bull</b>")+
+                            "\n\t" +
+                            Html.fromHtml("<b>&bull</b>") +
                             " Automatically send messages to the neighbours when you are busy" +
                             "\n\nThe app was developed by Chathuranga Siriwardhana for the 3rd year SEP at University of Moratuwa.")
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
