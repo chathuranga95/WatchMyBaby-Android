@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.robotium.solo.Solo;
 
+import junit.framework.Assert;
 import junit.framework.TestSuite;
 
 import org.junit.After;
@@ -57,11 +58,21 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void testABLogin() throws Exception {
-//        // Context of the app under test.
-//        Context appContext = InstrumentationRegistry.getTargetContext();
-//        assertEquals("com.example.chathus.watchmybaby", appContext.getPackageName());
+    public void testABwrongLogin(){
+        //Unlock the lock screen
+        solo.unlockScreen();
+        //Enter Username
+        solo.enterText(0, userName);
+        //Enter password
+        solo.enterText(1, "");
+        //Click Login button
+        solo.clickOnView(solo.getView(R.id.btnLogin));
+        //wait for error toast msg
+        Assert.assertTrue("Identified invalid credentials",this.solo.waitForText("Username or Password incorrect!"));
+    }
 
+    @Test
+    public void testACLogin() throws Exception {
         //Unlock the lock screen
         solo.unlockScreen();
         //Enter Username
@@ -76,7 +87,7 @@ public class LoginActivityTest {
     }
 
     @Test
-    public void testACAutoLogin() throws Exception {
+    public void testADAutoLogin() throws Exception {
         //Unlock the lock screen
         solo.unlockScreen();
         //Assert that Main activity is opened automatically

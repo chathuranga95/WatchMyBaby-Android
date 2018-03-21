@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created by chathuranga on 3/15/2018.
  */
@@ -43,7 +45,27 @@ public class CreateNewUserActivityTest {
     }
 
     @Test
-    public void testAACreateUser() {
+    public void testAAInvalidCreateUser() {
+        //Unlock the lock screen
+        solo.unlockScreen();
+        //goto create new user activity
+        solo.clickOnView(solo.getView(R.id.btnNewUser));
+        //Enter details
+        solo.enterText(0, name);
+        solo.enterText(1, email);
+        //solo.enterText(2, phone);
+        solo.enterText(3, userName);
+        solo.enterText(4, password);
+        solo.enterText(5, password);
+        //Click Create button
+        solo.clickOnView(solo.getView(R.id.btnOK));
+        //wait for error msg toast
+        assertTrue("Identified empty field",this.solo.waitForText("Please fill all the details."));
+    }
+
+
+    @Test
+    public void testABCreateUser() {
         //Unlock the lock screen
         solo.unlockScreen();
 
@@ -61,12 +83,15 @@ public class CreateNewUserActivityTest {
         //Click Create button
         solo.clickOnView(solo.getView(R.id.btnOK));
 
+        //wait for toast
+        assertTrue("user creation successful",this.solo.waitForText("New user Created successfully"));
+
         //go back
         solo.goBack();
     }
 
     @Test
-    public void testABLoginWithNewUser() {
+    public void testACLoginWithNewUser() {
         //Unlock the lock screen
         solo.unlockScreen();
 

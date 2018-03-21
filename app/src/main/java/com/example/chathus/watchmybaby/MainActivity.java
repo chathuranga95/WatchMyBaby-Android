@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import data.LocalDatabaseHandler;
 import utill.FileHandler;
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
                 dbHandler.clearNotifications(userName);
                 refreshNotificationView();
-
+                Toast.makeText(getApplicationContext(), "Notifications cleared.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -167,6 +168,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.clear_notification) {
             dbHandler.clearNotifications(userName);
             refreshNotificationView();
+            Toast.makeText(this, "Notifications cleared.", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.settings) {
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(myIntent);
