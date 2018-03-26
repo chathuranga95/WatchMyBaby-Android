@@ -53,6 +53,7 @@ public class CreateNewUserActivity extends AppCompatActivity {
         //validate user details
         validation = new Validate();
 
+
         // get database instance and slot to check whether the user already exists
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference myRef = database.getReference(userName);

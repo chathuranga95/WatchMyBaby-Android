@@ -5,9 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.nfc.Tag;
 import android.util.Log;
 
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 
 
@@ -58,6 +60,8 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    //return the name of logged user
+    //user has logged out or not logged in, return null
     public String getLoggedUser() {
         String loggedUser = null;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -65,7 +69,6 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery("select * from login", null);
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
-//                    Log.d(TAG, cursor.getString(0) + "  " + cursor.getString(1));
                     if (cursor.getString(1).equals("true")) {
                         loggedUser = cursor.getString(0);
                     }
@@ -78,22 +81,25 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         return loggedUser;
     }
 
+    //when success login, save username
     public void saveLogin(String userName) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             db.execSQL("delete from login");
-            db.execSQL("insert into login values('" + userName + "','true')");
+            SQLiteStatement stmt = db.compileStatement("insert into login values(?,'true')");
+            stmt.bindString(1, userName);
+            stmt.execute();
             Log.d(TAG, "saved logged user in db");
         } catch (SQLiteException ex) {
             Log.d(TAG, "error saving user in db");
         }
     }
 
-    public void saveLogout(String userName) {
+    //when login out, clear save logged in status
+    public void saveLogout() {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
             db.execSQL("delete from login");
-            db.execSQL("insert into login values('" + userName + "','false')");
             Log.d(TAG, "saved user logout in db");
         } catch (SQLiteException ex) {
             Log.d(TAG, "error saving user logout in db");
@@ -103,7 +109,12 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
     public void saveNewNotification(String userName, String date, String time, String msg) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            db.execSQL("insert into notifications values('" + userName + "','" + date + "','" + time + "','" + msg + "')");
+            SQLiteStatement stmt = db.compileStatement("insert into notifications values(?,?,?,?)");
+            stmt.bindString(1, userName);
+            stmt.bindString(2, date);
+            stmt.bindString(3, time);
+            stmt.bindString(4, msg);
+            stmt.execute();
             Log.d(TAG, "saved notification" + msg);
         } catch (SQLiteException ex) {
             Log.d(TAG, "error saving noti: " + msg + " " + ex.toString());
@@ -116,6 +127,7 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         String compositeNoti;
         try {
             Cursor cursor = db.rawQuery("select * from notifications where userName = '" + userName + "' order by date,time desc limit 10", null);
+
             if (cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     compositeNoti = cursor.getString(1) + ", " + cursor.getString(2) + "  : " + cursor.getString(3);
@@ -147,11 +159,11 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
         } catch (SQLiteException ee) {
             Log.d(TAG, "sql exception occured" + ee.toString());
         }
-        if(settings.isEmpty()){
-            settings.add(0,"false");
-            settings.add(1,"");
-            settings.add(2,"");
-            settings.add(3,"true");
+        if (settings.isEmpty()) {
+            settings.add(0, "false");
+            settings.add(1, "");
+            settings.add(2, "");
+            settings.add(3, "true");
         }
         return settings;
     }
@@ -159,8 +171,14 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
     public boolean setSettingsOnDB(String userName, String smsOn, String num1, String num2, String notiOn) {
         SQLiteDatabase db = this.getWritableDatabase();
         try {
-            db.execSQL("delete from settings");
-            db.execSQL("insert into settings values('" + userName + "','" + smsOn + "','" + num1 + "','" + num2 + "','" + notiOn + "')");
+            db.execSQL("delete from settings where userName = '" + userName + "'");
+            SQLiteStatement stmt = db.compileStatement("insert into settings values(?,?,?,?,?)");
+            stmt.bindString(1, userName);
+            stmt.bindString(2, smsOn);
+            stmt.bindString(3, num1);
+            stmt.bindString(4, num2);
+            stmt.bindString(5, notiOn);
+            stmt.execute();
             Log.d(TAG, "saved settings.");
         } catch (SQLiteException ex) {
             Log.d(TAG, "error saving noti: " + ex.toString());
@@ -178,5 +196,4 @@ public class LocalDatabaseHandler extends SQLiteOpenHelper {
             Log.d(TAG, "error clearing notifications from db");
         }
     }
-
 }

@@ -6,6 +6,7 @@ import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -71,6 +72,16 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
 
         //show loading..
         lblProgress.setText("Loading song list...");
+
+        //loading text should be discarded
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(lblProgress.getText().toString().equals("Loading song list...")) {
+                    lblProgress.setText("");
+                }
+            }
+        }, 2000);
 
         //ListView item select listener.
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -167,13 +178,14 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             if (requestCode == 302) {
                 if (null == data) {
+                    Toast.makeText(ScheculeLullabyActivity.this, "File upload cancelled", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 final Uri file = data.getData();
 
                 lullabyTitle = "";
                 final EditText txtTitle = new EditText(this);
-                txtTitle.setHint("this is hint");
+                txtTitle.setHint("My Lullaby");
                 new AlertDialog.Builder(this)
                         .setTitle("Edit Lullaby Title.")
                         //.setMessage("set your lullaby's title manually")
@@ -186,11 +198,13 @@ public class ScheculeLullabyActivity extends AppCompatActivity {
                                     fileHandler.upload(file, lullabyTitle);
                                 } else {
                                     Log.d("File-upload", "file name given empty");
+                                    Toast.makeText(ScheculeLullabyActivity.this, "File upload cancelled", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                Toast.makeText(ScheculeLullabyActivity.this, "File upload cancelled", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .show();

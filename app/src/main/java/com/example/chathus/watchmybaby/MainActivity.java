@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import data.LocalDatabaseHandler;
@@ -52,15 +53,12 @@ public class MainActivity extends AppCompatActivity
 
         doubleBackToExitPressedOnce = false;
 
+        listView = (ListView) findViewById(R.id.lstNotifications);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                dbHandler.clearNotifications(userName);
-                refreshNotificationView();
-                Toast.makeText(getApplicationContext(), "Notifications cleared.", Toast.LENGTH_SHORT).show();
+                btnRefreshClick(view);
             }
         });
 
@@ -72,7 +70,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         //get database Handler Object
         dbHandler = new LocalDatabaseHandler(this);
@@ -87,6 +84,10 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
+        View headerView = navigationView.getHeaderView(0);
+        TextView txtNameBar = (TextView) headerView.findViewById(R.id.txtNameBar);
+        txtNameBar.setText("Watch My Baby : " + userName);
+
         //notification service object
         mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -97,31 +98,37 @@ public class MainActivity extends AppCompatActivity
         //start notification listening service.
         startService(new Intent(this, NotificationService.class));
 
+
         //refresh notification viewing list view
         refreshNotificationView();
 
         Log.d(TAG, " main activity on create called");
 
+    }
 
-//        bv.setListener(new BooVariable.ChangeListener()
-//        {
-//            @Override
-//            public void onChange () {
-//                Toast.makeText(MainActivityOld.this, "blah", Toast.LENGTH_LONG).show();
-//                //refreshNotificationView();
-//            }
-//        });
+    private void btnRefreshClick(View view) {
+//        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null).show();
+        //dbHandler.clearNotifications(userName);
+        refreshNotificationView();
+        //Toast.makeText(getApplicationContext(), "Notifications cleared.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Notification list refreshed!", Toast.LENGTH_SHORT).show();
     }
 
     //fill up listview with last 10 notifications.
     public void refreshNotificationView() {
-        listView = (ListView) findViewById(R.id.lstNotifications);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(userName));
-        listView.setAdapter(adapter);
+        final Context context = this;
+        runOnUiThread(new Runnable() {
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(context,
+                    android.R.layout.simple_list_item_1, android.R.id.text1, dbHandler.retrieveNotifications(userName));
+
+            @Override
+            public void run() {
+                listView.setAdapter(adapter);
+            }
+        });
         Log.d(TAG, "notification view refresh called. username " + userName);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -236,7 +243,7 @@ public class MainActivity extends AppCompatActivity
 
     public void logout(MenuItem item) {
         //logout button click event
-        dbHandler.saveLogout(userName); //user logout store on local db
+        dbHandler.saveLogout(); //user logout store on local db
         Intent myIntent = new Intent(MainActivity.this, LoginActivity.class); //show login window
         startActivity(myIntent);
     }

@@ -28,6 +28,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:background="@android:color/holo_green_dark"
+        android:onClick="fileDelete"
         android:text="Delete"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toTopOf="@+id/relativeLayout3"
@@ -35,8 +36,7 @@
         app:layout_constraintHorizontal_bias="0.647"
         app:layout_constraintStart_toEndOf="@+id/btnSetTime"
         app:layout_constraintTop_toTopOf="@+id/btnSetTime"
-        app:layout_constraintVertical_bias="0.0"
-        android:onClick="fileDelete"/>
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnAddFromFile"
@@ -46,13 +46,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/holo_green_dark"
+        android:onClick="chooseFile"
         android:text="Add"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.017"
-        android:onClick="chooseFile"/>
+        app:layout_constraintVertical_bias="0.017" />
 
     <RelativeLayout
         android:id="@+id/relativeLayout3"
@@ -73,11 +73,11 @@
             android:layout_alignParentStart="true"
             android:layout_below="@+id/lblProgress"
             android:drawSelectorOnTop="false"
-            android:foreground="@android:color/black"
             android:listSelector="@android:color/darker_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@android:color/transparent"/>
 
         <TextView
             android:id="@+id/lblProgress"

@@ -57,7 +57,7 @@ public class FileHandler {
                     // Create User Object out of database data
                     user = (User) dataSnapshot.getValue(User.class);
                     Log.d(TAG, "user object received...");
-                    Log.d(TAG, "size  " +  user.getSettings().getFileList().size());
+//                    Log.d(TAG, "size  " +  user.getSettings().getFileList().size());
 
                     //add the filename to the settings section
                     user = addNewAttributes(user, fileName);
@@ -126,7 +126,10 @@ public class FileHandler {
     }
 
     private User addNewAttributes(User user, String fileName) {
-        UserAppSettings settings = user.getSettings();
+        UserAppSettings settings = new UserAppSettings();
+        if(user.getSettings()!=null) {
+            settings = user.getSettings();
+        }
         settings.addFile(fileName, 0000);
         user.setSettings(settings);
         return user;

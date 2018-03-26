@@ -147,8 +147,24 @@ public class WebRTC extends Thread {
                     int mm = calendar.get(Calendar.MONTH);
                     int yy = calendar.get(Calendar.YEAR);
 
+                    String seconds;
+                    if(sec<10){
+                        seconds = "0" + sec;
+                    }
+                    else{
+                        seconds = "" + sec;
+                    }
+
+                    String minutes;
+                    if(min<10){
+                        minutes = "0" + min;
+                    }
+                    else{
+                        minutes = "" + min;
+                    }
+
                     String date = yy + "-" + mm + "-" + dd;
-                    String time = hour + ":" + min + ":" + sec;
+                    String time = hour + ":" + minutes + ":" + seconds;
 
                     synchronized (new Object()) {
                         //save notification on the local database
@@ -173,15 +189,15 @@ public class WebRTC extends Thread {
                                         Log.d(TAG, "SMS sent");
                                         noOfSMS++;
                                         pushNotification(noOfSMS + " SMS's Sent");
+                                        dbHandler.saveNewNotification(userName, date, time, "SMS sent to "+smsNum1);
                                     }
                                     if (!smsNum2.equals("")) {
 //                                        smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
                                         Log.d(TAG, "SMS sent");
                                         noOfSMS++;
                                         pushNotification(noOfSMS + " SMS's Sent");
+                                        dbHandler.saveNewNotification(userName, date, time, "SMS sent to "+smsNum2);
                                     }
-
-
                                 }
                                 cryCounter = 0;
                             } else {
