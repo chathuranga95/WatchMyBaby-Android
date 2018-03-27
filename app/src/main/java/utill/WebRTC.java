@@ -8,13 +8,17 @@ import android.content.Intent;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.webkit.WebView;
 
 import com.example.chathus.watchmybaby.MainActivity;
 import com.example.chathus.watchmybaby.R;
+import com.google.gson.JsonObject;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
+import com.pubnub.api.callbacks.PNCallback;
 import com.pubnub.api.callbacks.SubscribeCallback;
 import com.pubnub.api.enums.PNStatusCategory;
+import com.pubnub.api.models.consumer.PNPublishResult;
 import com.pubnub.api.models.consumer.PNStatus;
 import com.pubnub.api.models.consumer.pubsub.PNMessageResult;
 import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
@@ -22,6 +26,7 @@ import com.pubnub.api.models.consumer.pubsub.PNPresenceEventResult;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Map;
 
 import data.LocalDatabaseHandler;
 
@@ -45,14 +50,6 @@ public class WebRTC extends Thread {
     static String smsNum2;
     static LocalDatabaseHandler dbHandler;
 
-
-//    public WebRTC(MainActivityOld act, NotificationManager nm, String uname){
-//        activity = act;
-//        mNotificationManager = nm;
-//        userName = uname;
-//        v = (Vibrator) activity.getApplicationContext().getSystemService(Context.VIBRATOR_SERVICE);
-//        Log.d(TAG, "paras inited");
-//    }
 
     public void run() {
         startListening();
@@ -85,9 +82,8 @@ public class WebRTC extends Thread {
     public static void setMainActivity(MainActivity ma) {
         mainActivity = ma;
     }
-    //start listening to the channel specified to the given user,
-    //feed the notification to the main activity again
 
+    //push notifications to the notification area
     public static void pushNotification(String msg) {
         if (isNoti) {
             //vibrator pattern
@@ -113,6 +109,39 @@ public class WebRTC extends Thread {
         }
     }
 
+    //send a JSon message to the web app at the end
+    // of a video call session to refresh the web page
+    public static void sendCallEnd() {
+        PNConfiguration pnConfiguration = new PNConfiguration();
+        pnConfiguration.setPublishKey("pub-c-616fc02a-063a-41cd-8185-dcf5ba936b2a");
+        pnConfiguration.setSubscribeKey("sub-c-f72b3372-f5da-11e7-8098-329148162fa8");
+        PubNub pubnub = new PubNub(pnConfiguration);
+
+
+        JsonObject message = new JsonObject();
+        message.addProperty("message", "reload request");
+
+        pubnub.publish().channel("watchMyBaby" + userName).message(message).async(
+                new PNCallback() {
+                    @Override
+                    public void onResponse(Object result, PNStatus status) {
+                        try {
+                            if (!status.isError()) {
+                                //mMessage.setText("");
+                                Log.v(TAG, "published");
+                            } else {
+                                Log.v(TAG, "publishErr");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+    }
+
+    //start listening to the channel specified to the given user,
+    //feed the notification to the main activity again
     public static void startListening() {
         PNConfiguration pnConfiguration = new PNConfiguration();
         pnConfiguration.setPublishKey("pub-c-616fc02a-063a-41cd-8185-dcf5ba936b2a");
@@ -135,89 +164,82 @@ public class WebRTC extends Thread {
                 public void message(PubNub pubnub, PNMessageResult message) {
                     String msg = message.getMessage().toString();
                     Log.d(TAG, msg);
+                    if (msg.equals("{\"message\":\"baby cried\"}")) {
+                        //setup the current date and time
+                        Calendar calendar = Calendar.getInstance();
 
+                        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                        int min = calendar.get(Calendar.MINUTE);
+                        int sec = calendar.get(Calendar.SECOND);
+                        int dd = calendar.get(Calendar.DAY_OF_MONTH);
+                        int mm = calendar.get(Calendar.MONTH);
+                        int yy = calendar.get(Calendar.YEAR);
 
-                    //setup the current date and time
-                    Calendar calendar = Calendar.getInstance();
-
-                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                    int min = calendar.get(Calendar.MINUTE);
-                    int sec = calendar.get(Calendar.SECOND);
-                    int dd = calendar.get(Calendar.DAY_OF_MONTH);
-                    int mm = calendar.get(Calendar.MONTH);
-                    int yy = calendar.get(Calendar.YEAR);
-
-                    String seconds;
-                    if(sec<10){
-                        seconds = "0" + sec;
-                    }
-                    else{
-                        seconds = "" + sec;
-                    }
-
-                    String minutes;
-                    if(min<10){
-                        minutes = "0" + min;
-                    }
-                    else{
-                        minutes = "" + min;
-                    }
-
-                    String date = yy + "-" + mm + "-" + dd;
-                    String time = hour + ":" + minutes + ":" + seconds;
-
-                    synchronized (new Object()) {
-                        //save notification on the local database
-                        dbHandler.saveNewNotification(userName, date, time, "baby cried");
-                    }
-
-
-                    if (cryCounter < 3) {
-                        long cryInterval = calendar.getTimeInMillis() - lastCryTime;
-                        if (cryInterval < 60000) {
-                            cryCounter++;
-                            lastCryTime = calendar.getTimeInMillis();
-
-                            Log.d(TAG, "Cry time " + cryCounter + "  cried within " + cryInterval);
-
-                            if (cryCounter >= 3) {
-                                if (isSMSON && iscurrSMS) {
-                                    SMSHandler smsHandler = new SMSHandler();
-                                    int noOfSMS = 0;
-                                    if (!smsNum1.equals("")) {
-//                                        smsHandler.sendSMS(smsNum1, "Please watch the baby at next door \n Automated message from Watch My Baby");
-                                        Log.d(TAG, "SMS sent");
-                                        noOfSMS++;
-                                        pushNotification(noOfSMS + " SMS's Sent");
-                                        dbHandler.saveNewNotification(userName, date, time, "SMS sent to "+smsNum1);
-                                    }
-                                    if (!smsNum2.equals("")) {
-//                                        smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
-                                        Log.d(TAG, "SMS sent");
-                                        noOfSMS++;
-                                        pushNotification(noOfSMS + " SMS's Sent");
-                                        dbHandler.saveNewNotification(userName, date, time, "SMS sent to "+smsNum2);
-                                    }
-                                }
-                                cryCounter = 0;
-                            } else {
-                                pushNotification("Baby Cried " + cryCounter + " times");
-                            }
+                        String seconds;
+                        if (sec < 10) {
+                            seconds = "0" + sec;
                         } else {
-                            cryCounter = 1;
+                            seconds = "" + sec;
                         }
-                    }
 
-//                    MainActivityOld ac = new MainActivityOld();
-//                    ac.refreshNotificationView();
+                        String minutes;
+                        if (min < 10) {
+                            minutes = "0" + min;
+                        } else {
+                            minutes = "" + min;
+                        }
 
-                    //bv.setBoo(!bv.isBoo());
+                        String date = yy + "-" + mm + "-" + dd;
+                        String time = hour + ":" + minutes + ":" + seconds;
 
-                    //change main activity's view
-                    try {
-                        mainActivity.refreshNotificationView();
-                    } catch (Exception ex) {
-                        //
+                        synchronized (new Object()) {
+                            //save notification on the local database
+                            dbHandler.saveNewNotification(userName, date, time, "baby cried");
+                        }
+
+
+                        if (cryCounter < 3) {
+                            long cryInterval = calendar.getTimeInMillis() - lastCryTime;
+                            if (cryInterval < 60000) {
+                                cryCounter++;
+                                lastCryTime = calendar.getTimeInMillis();
+
+                                Log.d(TAG, "Cry time " + cryCounter + "  cried within " + cryInterval);
+
+                                if (cryCounter >= 3) {
+                                    if (isSMSON && iscurrSMS) {
+                                        SMSHandler smsHandler = new SMSHandler();
+                                        int noOfSMS = 0;
+                                        if (!smsNum1.equals("")) {
+//                                        smsHandler.sendSMS(smsNum1, "Please watch the baby at next door \n Automated message from Watch My Baby");
+                                            Log.d(TAG, "SMS sent");
+                                            noOfSMS++;
+                                            pushNotification(noOfSMS + " SMS's Sent");
+                                            dbHandler.saveNewNotification(userName, date, time, "SMS sent to " + smsNum1);
+                                        }
+                                        if (!smsNum2.equals("")) {
+//                                        smsHandler.sendSMS(smsNum2, "Please watch the baby at next door \n Automated message from Watch My Baby");
+                                            Log.d(TAG, "SMS sent");
+                                            noOfSMS++;
+                                            pushNotification(noOfSMS + " SMS's Sent");
+                                            dbHandler.saveNewNotification(userName, date, time, "SMS sent to " + smsNum2);
+                                        }
+                                    }
+                                    cryCounter = 0;
+                                } else {
+                                    pushNotification("Baby Cried " + cryCounter + " times");
+                                }
+                            } else {
+                                cryCounter = 1;
+                            }
+                        }
+
+                        //change main activity's view
+                        try {
+                            mainActivity.refreshNotificationView();
+                        } catch (Exception ex) {
+                            //
+                        }
                     }
                 }
 

@@ -17,6 +17,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 
+import utill.WebRTC;
+
 
 public class ViewBabyActivity extends Activity {
     WebView myWebView;
@@ -30,7 +32,7 @@ public class ViewBabyActivity extends Activity {
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-//Remove notification bar
+        //Remove notification bar
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_view_baby);
 
@@ -93,20 +95,14 @@ public class ViewBabyActivity extends Activity {
         myWebView.loadUrl("about:blank");
         myWebView.loadUrl("https://watchmybaby-52d18.firebaseapp.com/videoCallView.html");
 
-//        myWebView.setKeepScreenOn(true);
-//        myWebView.setHorizontalScrollBarEnabled(false);
-//        myWebView.setVerticalScrollBarEnabled(false);
-    }
-
-    public void changeColor(View view) {
-//        myWebView.loadUrl("javascript:changeBackgroundColor()");
-        String color = "red";
-        myWebView.loadUrl("javascript:changeBackgroundColor1('" + color + "')");
-        Log.d("changeColor", "Color change request");
+        myWebView.setKeepScreenOn(true);
+        myWebView.setHorizontalScrollBarEnabled(false);
+        myWebView.setVerticalScrollBarEnabled(false);
     }
 
     public void hangupGoBack(View view) {
         try {
+            WebRTC.sendCallEnd();  //refresh JSon message sending to web app to end call.
 //            myWebView.loadUrl("javascript:disconnectCall()");
             myWebView.loadUrl("file:///android_asset/disconnect.html");
             Log.d("videoCallHangup", "Call disconnected...");
@@ -114,13 +110,13 @@ public class ViewBabyActivity extends Activity {
             Log.d("videoCallHangup", "error 1");
             Log.d("videoCallHangup", ex.toString());
         }
-        try{
+
+        try {
             //show main page.
             Intent myIntent = new Intent(ViewBabyActivity.this, MainActivity.class);
             startActivity(myIntent);
 
-        }
-        catch (Exception ee){
+        } catch (Exception ee) {
             Log.d("videoCallHangup", "error 2");
             Log.d("videoCallHangup", ee.toString());
         }

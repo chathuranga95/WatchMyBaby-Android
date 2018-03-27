@@ -198,6 +198,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.settings) {
             Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(myIntent);
+        } else if (id == R.id.acc_settings) {
+            Intent myIntent = new Intent(MainActivity.this, ChangePasswordActivity.class);
+            startActivity(myIntent);
         } else if (id == R.id.nav_share) {
             Intent sendIntent = new Intent();
             sendIntent.setAction(Intent.ACTION_SEND);

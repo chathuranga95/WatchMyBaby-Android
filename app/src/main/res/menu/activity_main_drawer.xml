@@ -19,7 +19,12 @@
         <item
             android:id="@+id/settings"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Settings" />
+            android:title="App Settings" />
+
+        <item
+            android:id="@+id/acc_settings"
+            android:icon="@drawable/uas"
+            android:title="User Account Settings" />
     </group>
 
     <item android:title="App">

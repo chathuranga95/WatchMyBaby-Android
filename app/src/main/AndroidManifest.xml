@@ -27,9 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- android:theme="@style/AppTheme"> -->
-
-
         <!-- Login Activity -->
         <activity
             android:name=".LoginActivity"
@@ -50,29 +47,40 @@
             android:label="Create User Account"
             android:screenOrientation="portrait" />
 
-        <!-- Main Activity -->
-
         <!-- Video Call activity -->
         <activity
             android:name=".ViewBabyActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name=".ScheculeLullabyActivity" />
-        <activity android:name=".SettingsActivity" />
+        <!--schedule lullaby activity-->
+        <activity
+            android:name=".ScheculeLullabyActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"></activity>
+        <!--app settings activity-->
+        <activity
+            android:name=".SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"></activity>
 
         <!-- Cry alert listening background service -->
         <service
             android:name="utill.NotificationService"
             android:enabled="true"
             android:exported="true" />
-
+        <!--Main activity-->
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Watch My Baby"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <!--Change password activity-->
+        <activity
+            android:name=".ChangePasswordActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
